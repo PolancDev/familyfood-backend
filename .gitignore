@@ -5,3 +5,10 @@ target/
 *.iml
 .env
 .DS_Store
+
+# Maven
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/apache-maven-3.9.6/
+mvnw
+mvnw.cmd
