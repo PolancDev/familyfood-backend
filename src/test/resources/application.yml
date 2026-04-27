@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: familyfood-backend-test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/familyfood_test
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  flyway:
+    enabled: false
+
+server:
+  port: 0
+
+jwt:
+  secret: familyfood-secret-key-must-be-at-least-256-bits-long-for-hs256
+  expiration: 86400000
+
+logging:
+  level:
+    com.familyfood: DEBUG
