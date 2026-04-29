@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     nombre VARCHAR(100) NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL,
     fecha_actualizacion TIMESTAMP NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'ADMIN',
+    role VARCHAR(20) NOT NULL DEFAULT 'INVITADO',
     miembros_familia INTEGER,
     nivel_cocina VARCHAR(50),
     restricciones_alimentarias TEXT

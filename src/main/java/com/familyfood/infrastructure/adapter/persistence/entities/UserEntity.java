@@ -4,19 +4,20 @@ import com.familyfood.domain.model.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.familyfood.domain.model.Role.ADMIN;
+import static com.familyfood.domain.model.Role.INVITADO;
 
 @Entity
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 @Builder
 public class UserEntity {
 
@@ -41,8 +42,7 @@ public class UserEntity {
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Role role = ADMIN;
+    private Role role;
 
     @Column(name = "miembros_familia")
     private Integer miembrosFamilia;
@@ -56,6 +56,9 @@ public class UserEntity {
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
+        if (role == null) {
+            role = INVITADO;
+        }
         if (fechaCreacion == null) {
             fechaCreacion = now;
         }

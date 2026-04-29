@@ -67,7 +67,7 @@ class UserRepositoryAdapterTest {
         @DisplayName("Should save user successfully")
         void shouldSaveUserSuccessfully() {
             // Given
-            when(userMapper.toEntity(any(User.class))).thenReturn(testUserEntity);
+            when(userMapper.toEntityForUpdate(any(User.class))).thenReturn(testUserEntity);
             when(springDataUserRepository.save(any(UserEntity.class))).thenReturn(testUserEntity);
             when(userMapper.toDomain(any(UserEntity.class))).thenReturn(testUser);
 
@@ -78,7 +78,7 @@ class UserRepositoryAdapterTest {
             assertThat(result).isNotNull();
             assertThat(result.getId()).isEqualTo(testUser.getId());
             assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
-            verify(userMapper).toEntity(testUser);
+            verify(userMapper).toEntityForUpdate(testUser);
             verify(springDataUserRepository).save(testUserEntity);
             verify(userMapper).toDomain(testUserEntity);
         }
@@ -94,7 +94,7 @@ class UserRepositoryAdapterTest {
                     .build();
             testUser.setPreferencias(prefs);
 
-            when(userMapper.toEntity(any(User.class))).thenReturn(testUserEntity);
+            when(userMapper.toEntityForUpdate(any(User.class))).thenReturn(testUserEntity);
             when(springDataUserRepository.save(any(UserEntity.class))).thenReturn(testUserEntity);
             when(userMapper.toDomain(any(UserEntity.class))).thenReturn(testUser);
 

@@ -59,8 +59,7 @@ class AuthControllerTest {
             RegisterRequest request = new RegisterRequest(
                     "test@example.com",
                     "password123",
-                    "Test User",
-                    null
+                    "Test User"
             );
 
             RegisterResponse response = new RegisterResponse(
@@ -90,8 +89,7 @@ class AuthControllerTest {
             RegisterRequest request = new RegisterRequest(
                     "existing@example.com",
                     "password123",
-                    "Test User",
-                    null
+                    "Test User"
             );
 
             when(authService.registro(any(RegisterRequest.class)))

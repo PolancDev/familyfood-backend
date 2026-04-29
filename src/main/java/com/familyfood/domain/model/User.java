@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.familyfood.domain.model.Role.ADMIN;
+import static com.familyfood.domain.model.Role.INVITADO;
 
 @Data
 @NoArgsConstructor
@@ -32,7 +32,7 @@ public class User {
                 .nombre(nombre)
                 .fechaCreacion(LocalDateTime.now())
                 .fechaActualizacion(LocalDateTime.now())
-                .role(ADMIN)
+                .role(INVITADO)
                 .build();
     }
 

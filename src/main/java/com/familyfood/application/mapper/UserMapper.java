@@ -16,7 +16,13 @@ public interface UserMapper {
     @Mapping(target = "miembrosFamilia", ignore = true)
     @Mapping(target = "nivelCocina", ignore = true)
     @Mapping(target = "restriccionesAlimentarias", ignore = true)
-    UserEntity toEntity(User user);
+    UserEntity toEntityForCreate(User user);
+
+    @Mapping(target = "role", source = "role")
+    @Mapping(target = "miembrosFamilia", ignore = true)
+    @Mapping(target = "nivelCocina", ignore = true)
+    @Mapping(target = "restriccionesAlimentarias", ignore = true)
+    UserEntity toEntityForUpdate(User user);
 
     @Mapping(target = "preferencias", ignore = true)
     @Mapping(target = "password", ignore = true)
