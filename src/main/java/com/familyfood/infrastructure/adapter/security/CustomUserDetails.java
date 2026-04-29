@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 /**
  * Implementación de UserDetails de Spring Security que mapea desde el modelo de dominio User.
@@ -20,6 +21,7 @@ import java.util.Collections;
 @Builder
 public class CustomUserDetails implements UserDetails {
 
+    private UUID id;
     private String email;
     private String password;
     private String nombre;
@@ -60,10 +62,15 @@ public class CustomUserDetails implements UserDetails {
     }
 
     /**
-     * Factory method para crear CustomUserDetails desde un User del dominio.
+     * Devuelve el UUID del usuario.
      */
+    public UUID getUserId() {
+        return id;
+    }
+
     public static CustomUserDetails fromDomain(User user) {
         return CustomUserDetails.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .nombre(user.getNombre())

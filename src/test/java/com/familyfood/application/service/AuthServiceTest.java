@@ -69,8 +69,7 @@ class AuthServiceTest {
         registerRequest = new RegisterRequest(
                 "test@example.com",
                 "password123",
-                "Test User",
-                null
+                "Test User"
         );
 
         loginRequest = new LoginRequest(

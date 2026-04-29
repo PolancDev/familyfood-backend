@@ -6,6 +6,8 @@ import com.familyfood.domain.model.User;
 import com.familyfood.infrastructure.adapter.persistence.entities.UserEntity;
 import com.familyfood.infrastructure.adapter.persistence.repository.SpringDataUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,6 +15,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class UserRepositoryAdapter implements UserRepository {
 
     private final SpringDataUserRepository repository;
@@ -20,7 +23,19 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public User save(User user) {
-        UserEntity entity = userMapper.toEntity(user);
+        log.info("============ Estoy en save repository ============");
+        log.info("Usuario que me llega: {}", user);
+
+        UserEntity entity;
+        if (user.getId() != null) {
+            log.info("Usuario con ID existente -> UPDATE");
+            entity = userMapper.toEntityForUpdate(user);
+        } else {
+            log.info("Usuario sin ID -> CREATE");
+            entity = userMapper.toEntityForCreate(user);
+        }
+
+        log.info("Usuario entity: {}", entity.getId());
         return userMapper.toDomain(repository.save(entity));
     }
 
@@ -39,5 +54,10 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
     }
 }
