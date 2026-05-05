@@ -67,6 +67,17 @@ src/main/java/com/familyfood/
 |--------|------|-------------|------|
 | GET | `/api/v1/usuarios/me` | Perfil del usuario actual | ✅ Sí |
 
+### Recetas
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| GET | `/api/v1/recetas` | Listar recetas del usuario | ✅ Sí |
+| POST | `/api/v1/recetas` | Crear nueva receta | ✅ Sí |
+| GET | `/api/v1/recetas/{id}` | Obtener receta por ID | ✅ Sí |
+| PUT | `/api/v1/recetas/{id}` | Actualizar receta | ✅ Sí |
+| DELETE | `/api/v1/recetas/{id}` | Eliminar receta | ✅ Sí |
+
+**Características:** CRUD completo con ingredientes, etiquetas (RAPIDA, ECONOMICA, NINOS), niveles de cocina (BASICO, MEDIO, AVANZADO), fotos y soporte para optimistic locking.
+
 ## Base de Datos
 
 ### Migraciones Flyway
