@@ -196,6 +196,23 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <!-- Excluir la clase main de la aplicación -->
+                        <exclude>com/familyfood/FamilyFoodApplication.class</exclude>
+                        <!-- Excluir DTOs simples (records/POJOs sin lógica) -->
+                        <exclude>com/familyfood/application/dto/**/*.class</exclude>
+                        <!-- Excluir entidades JPA (son POJOs con anotaciones) -->
+                        <exclude>com/familyfood/infrastructure/adapter/persistence/entities/**/*.class</exclude>
+                        <!-- Excluir builders de Lombok generados -->
+                        <exclude>com/familyfood/domain/model/**/*$*Builder*.class</exclude>
+                        <!-- Excluir implementaciones de MapStruct generadas (se prueban via integración) -->
+                        <exclude>com/familyfood/application/mapper/**/*Impl*.class</exclude>
+                        <exclude>com/familyfood/infrastructure/adapter/persistence/adapters/*EntityMapper*Impl*.class</exclude>
+                        <!-- Excluir configuraciones de Spring Boot (beans declarativos) -->
+                        <exclude>com/familyfood/infrastructure/config/ApplicationServiceConfig.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -208,6 +225,38 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                    <!-- Gate de cobertura: mínimo 30% (paso realista desde 19%) -->
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.30</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.10</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>CLASS</counter>
+                                            <value>MISSEDCOUNT</value>
+                                            <maximum>30</maximum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -5,8 +5,10 @@ import com.familyfood.domain.exception.FamilyGroupNotFoundException;
 import com.familyfood.domain.exception.InvalidCredentialsException;
 import com.familyfood.domain.exception.InvalidRoleException;
 import com.familyfood.domain.exception.JoinRequestNotFoundException;
+import com.familyfood.domain.exception.RecipeNotFoundException;
 import com.familyfood.domain.exception.UnauthorizedException;
 import com.familyfood.domain.exception.UserNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -168,5 +170,40 @@ public class GlobalExceptionHandler {
         response.put("error", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Maneja excepción de receta no encontrada.
+     *
+     * @param ex excepción de receta no encontrada
+     * @return respuesta con estado NOT_FOUND
+     */
+    @ExceptionHandler(RecipeNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleRecipeNotFound(
+            final RecipeNotFoundException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Maneja excepción de concurrencia optimista.
+     *
+     * @param ex excepción de concurrencia
+     * @return respuesta con estado CONFLICT
+     */
+    @ExceptionHandler(OptimisticLockException.class)
+    public ResponseEntity<Map<String, Object>> handleOptimisticLock(
+            final OptimisticLockException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.CONFLICT.value());
+        response.put("error", "Conflicto de concurrencia");
+        response.put("mensaje", "La receta ha sido modificada por otro usuario. Recarga los datos e inténtalo de nuevo.");
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }
