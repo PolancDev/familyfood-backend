@@ -4,7 +4,7 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/familyfood}
     username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:F4m1lyF00d_2026!#}
+    password: ${DB_PASSWORD:Admin@123}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

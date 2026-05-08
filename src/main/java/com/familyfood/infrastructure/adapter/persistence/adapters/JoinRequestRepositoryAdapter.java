@@ -6,6 +6,8 @@ import com.familyfood.domain.model.JoinRequest;
 import com.familyfood.infrastructure.adapter.persistence.entities.JoinRequestEntity;
 import com.familyfood.infrastructure.adapter.persistence.repository.SpringDataJoinRequestRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class JoinRequestRepositoryAdapter implements JoinRequestRepository {
 
     private final SpringDataJoinRequestRepository repository;
@@ -24,7 +27,9 @@ public class JoinRequestRepositoryAdapter implements JoinRequestRepository {
         JoinRequestEntity entity;
         if (joinRequest.getId() != null) {
             entity = toEntityForUpdate(joinRequest);
+            log.info("Actualizando solicitud de unión: userId={}, familyGroupId={}", joinRequest.getUserId(), joinRequest.getFamilyGroupId());
         } else {
+            log.info("Creando nueva solicitud de unión: userId={}, familyGroupId={}", joinRequest.getUserId(), joinRequest.getFamilyGroupId());
             entity = toEntityForCreate(joinRequest);
         }
         return toDomain(repository.save(entity));
@@ -67,6 +72,7 @@ public class JoinRequestRepositoryAdapter implements JoinRequestRepository {
                 .familyGroupId(entity.getFamilyGroupId())
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
+                .version(entity.getVersion())
                 .build();
     }
 
@@ -89,6 +95,7 @@ public class JoinRequestRepositoryAdapter implements JoinRequestRepository {
                 .familyGroupId(domain.getFamilyGroupId())
                 .status(domain.getStatus())
                 .createdAt(domain.getCreatedAt())
+                .version(domain.getVersion())
                 .build();
     }
 }

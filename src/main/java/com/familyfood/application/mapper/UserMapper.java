@@ -16,6 +16,7 @@ public interface UserMapper {
     @Mapping(target = "miembrosFamilia", ignore = true)
     @Mapping(target = "nivelCocina", ignore = true)
     @Mapping(target = "restriccionesAlimentarias", ignore = true)
+    @Mapping(target = "version", ignore = true)
     UserEntity toEntityForCreate(User user);
 
     @Mapping(target = "role", source = "role")
@@ -50,6 +51,7 @@ public interface UserMapper {
                 .fechaActualizacion(entity.getFechaActualizacion())
                 .preferencias(prefs)
                 .role(entity.getRole())
+                .version(entity.getVersion())
                 .build();
     }
 }

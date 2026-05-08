@@ -78,7 +78,7 @@ class RecipeServiceTest {
         testRecipeResponse = new RecipeResponse(
                 recipeId, "Ensalada", "Ensalada fresca", 15, 2,
                 ingredientDTOs, List.of("Cortar", "Mezclar"),
-                List.of(EtiquetaReceta.RAPIDA), null, false, 0L
+                List.of(EtiquetaReceta.RAPIDA), null, false
         );
 
         createRequest = new CreateRecipeRequest(
@@ -90,7 +90,7 @@ class RecipeServiceTest {
         updateRequest = new UpdateRecipeRequest(
                 "Ensalada Actualizada", "Descripción actualizada", 20, 4,
                 ingredientDTOs, List.of("Cortar", "Mezclar", "Servir"),
-                List.of(EtiquetaReceta.RAPIDA, EtiquetaReceta.ECONOMICA), 0L
+                List.of(EtiquetaReceta.RAPIDA, EtiquetaReceta.ECONOMICA)
         );
     }
 
@@ -142,7 +142,7 @@ class RecipeServiceTest {
         @Test
         @DisplayName("Should filter recipes by etiqueta")
         void shouldFilterByEtiqueta() {
-            when(recipeRepository.findByEtiquetasContainsAndUserId(EtiquetaReceta.RAPIDA, userId))
+            when(recipeRepository.findByEtiquetasContainsAndUserId("RAPIDA", userId))
                     .thenReturn(List.of(testRecipe));
             when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
 
@@ -150,7 +150,21 @@ class RecipeServiceTest {
 
             assertThat(response).isNotNull();
             assertThat(response.recetas()).hasSize(1);
-            verify(recipeRepository).findByEtiquetasContainsAndUserId(EtiquetaReceta.RAPIDA, userId);
+            verify(recipeRepository).findByEtiquetasContainsAndUserId("RAPIDA", userId);
+        }
+
+        @Test
+        @DisplayName("Should filter recipes by custom etiqueta")
+        void shouldFilterByCustomEtiqueta() {
+            when(recipeRepository.findByEtiquetasContainsAndUserId("ETIQUETA1", userId))
+                    .thenReturn(List.of(testRecipe));
+            when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
+
+            RecipeListResponse response = recipeService.listarRecetas(userId, null, null, "etiqueta1");
+
+            assertThat(response).isNotNull();
+            assertThat(response.recetas()).hasSize(1);
+            verify(recipeRepository).findByEtiquetasContainsAndUserId("ETIQUETA1", userId);
         }
     }
 

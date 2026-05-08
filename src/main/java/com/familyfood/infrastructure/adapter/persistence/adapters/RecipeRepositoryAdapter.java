@@ -1,7 +1,6 @@
 package com.familyfood.infrastructure.adapter.persistence.adapters;
 
 import com.familyfood.application.port.repository.RecipeRepository;
-import com.familyfood.domain.enums.EtiquetaReceta;
 import com.familyfood.domain.model.Recipe;
 import com.familyfood.infrastructure.adapter.persistence.entities.RecipeEntity;
 import com.familyfood.infrastructure.adapter.persistence.repository.SpringDataRecipeRepository;
@@ -58,7 +57,7 @@ public class RecipeRepositoryAdapter implements RecipeRepository {
     }
 
     @Override
-    public List<Recipe> findByEtiquetasContainsAndUserId(EtiquetaReceta etiqueta, UUID userId) {
+    public List<Recipe> findByEtiquetasContainsAndUserId(String etiqueta, UUID userId) {
         return entityMapper.toDomainList(
                 repository.findByEtiquetasContainsAndUserIdOrderByNombreAsc(etiqueta, userId));
     }

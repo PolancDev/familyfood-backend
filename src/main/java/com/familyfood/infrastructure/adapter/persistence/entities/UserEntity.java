@@ -53,6 +53,10 @@ public class UserEntity {
     @Column(name = "restricciones_alimentarias")
     private String restriccionesAlimentarias;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();

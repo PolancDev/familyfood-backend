@@ -15,8 +15,6 @@ import com.familyfood.domain.model.JoinRequest;
 import com.familyfood.domain.model.Role;
 import com.familyfood.domain.model.User;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;

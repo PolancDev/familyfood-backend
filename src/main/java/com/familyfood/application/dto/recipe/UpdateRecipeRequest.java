@@ -1,9 +1,7 @@
 package com.familyfood.application.dto.recipe;
 
-import com.familyfood.domain.enums.EtiquetaReceta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
@@ -30,8 +28,5 @@ public record UpdateRecipeRequest(
     @NotEmpty(message = "Debe haber al menos un paso")
     List<String> pasos,
 
-    List<EtiquetaReceta> etiquetas,
-
-    @NotNull(message = "La versión es obligatoria para control de concurrencia")
-    Long version
+    List<String> etiquetas
 ) {}

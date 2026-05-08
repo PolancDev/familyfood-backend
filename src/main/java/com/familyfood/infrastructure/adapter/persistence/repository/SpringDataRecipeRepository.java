@@ -1,6 +1,5 @@
 package com.familyfood.infrastructure.adapter.persistence.repository;
 
-import com.familyfood.domain.enums.EtiquetaReceta;
 import com.familyfood.infrastructure.adapter.persistence.entities.RecipeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,7 @@ public interface SpringDataRecipeRepository extends JpaRepository<RecipeEntity, 
 
     List<RecipeEntity> findByFavoritaTrueAndUserIdOrderByNombreAsc(UUID userId);
 
-    List<RecipeEntity> findByEtiquetasContainsAndUserIdOrderByNombreAsc(EtiquetaReceta etiqueta, UUID userId);
+    List<RecipeEntity> findByEtiquetasContainsAndUserIdOrderByNombreAsc(String etiqueta, UUID userId);
 
     List<RecipeEntity> findByNombreContainingIgnoreCaseAndUserIdOrderByNombreAsc(String busqueda, UUID userId);
 }

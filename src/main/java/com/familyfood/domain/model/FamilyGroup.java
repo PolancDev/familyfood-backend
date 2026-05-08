@@ -18,6 +18,9 @@ public class FamilyGroup {
     private UUID createdBy;
     private LocalDateTime createdAt;
 
+    @Builder.Default
+    private Long version = 0L;
+
     public static FamilyGroup create(String name, UUID createdBy) {
         return FamilyGroup.builder()
                 .id(UUID.randomUUID())
