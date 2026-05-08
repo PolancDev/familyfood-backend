@@ -63,6 +63,8 @@ public class FamilyController {
     public ResponseEntity<Void> joinFamily(
             final @AuthenticationPrincipal UserDetails userDetails,
             final @PathVariable UUID id) {
+        log.info("*********************************************************");
+        log.info("Solicitud de unión a grupo: usuario={}, grupo={}", userDetails.getUsername(), id);
         UUID userId = extractUserId(userDetails);
         log.info("Solicitud de unión a grupo: usuario={}, grupo={}", userId, id);
         familyService.joinFamily(userId, id);

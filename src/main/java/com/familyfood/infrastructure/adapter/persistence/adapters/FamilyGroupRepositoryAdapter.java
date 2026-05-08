@@ -60,6 +60,7 @@ public class FamilyGroupRepositoryAdapter implements FamilyGroupRepository {
                 .name(entity.getName())
                 .createdBy(entity.getCreatedBy())
                 .createdAt(entity.getCreatedAt())
+                .version(entity.getVersion())
                 .build();
     }
 
@@ -80,6 +81,7 @@ public class FamilyGroupRepositoryAdapter implements FamilyGroupRepository {
                 .name(domain.getName())
                 .createdBy(domain.getCreatedBy())
                 .createdAt(domain.getCreatedAt())
+                .version(domain.getVersion())
                 .build();
     }
 }

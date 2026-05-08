@@ -92,7 +92,6 @@ class RecipeMapperTest {
             assertThat(response.raciones()).isEqualTo(2);
             assertThat(response.imagen()).isEqualTo("ensalada.jpg");
             assertThat(response.favorita()).isTrue();
-            assertThat(response.version()).isEqualTo(1L);
 
             assertThat(response.ingredientes())
                     .hasSize(2)
@@ -307,8 +306,7 @@ class RecipeMapperTest {
                     3,
                     List.of(ingredientDTO1),
                     List.of("Paso nuevo"),
-                    List.of(EtiquetaReceta.NINOS),
-                    2L
+                    List.of(EtiquetaReceta.NINOS)
             );
 
             // When
@@ -324,7 +322,7 @@ class RecipeMapperTest {
             assertThat(recipe.getImagen()).isNull(); // ignored
             assertThat(recipe.getUserId()).isNull(); // ignored
             assertThat(recipe.isFavorita()).isFalse(); // ignored (default)
-            assertThat(recipe.getVersion()).isEqualTo(2L);
+            assertThat(recipe.getVersion()).isEqualTo(0L); // ignored, uses @Builder.Default
 
             assertThat(recipe.getIngredientes())
                     .hasSize(1)

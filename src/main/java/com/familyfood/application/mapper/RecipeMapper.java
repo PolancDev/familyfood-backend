@@ -26,6 +26,7 @@ public interface RecipeMapper {
     @Mapping(target = "favorita", ignore = true)
     @Mapping(target = "imagen", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "version", ignore = true)
     Recipe toDomainFromUpdate(UpdateRecipeRequest request);
 
     RecipeResponse toResponse(Recipe recipe);

@@ -1,6 +1,5 @@
 package com.familyfood.application.port.repository;
 
-import com.familyfood.domain.enums.EtiquetaReceta;
 import com.familyfood.domain.model.Recipe;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public interface RecipeRepository {
     List<Recipe> findAll();
     List<Recipe> findByUserId(UUID userId);
     List<Recipe> findByFavoritaTrueAndUserId(UUID userId);
-    List<Recipe> findByEtiquetasContainsAndUserId(EtiquetaReceta etiqueta, UUID userId);
+    List<Recipe> findByEtiquetasContainsAndUserId(String etiqueta, UUID userId);
     List<Recipe> findByNombreContainingIgnoreCaseAndUserId(String busqueda, UUID userId);
     void deleteById(UUID id);
     boolean existsById(UUID id);

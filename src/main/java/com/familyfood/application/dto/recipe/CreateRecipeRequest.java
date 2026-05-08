@@ -1,6 +1,5 @@
 package com.familyfood.application.dto.recipe;
 
-import com.familyfood.domain.enums.EtiquetaReceta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
@@ -29,7 +28,7 @@ public record CreateRecipeRequest(
     @NotEmpty(message = "Debe haber al menos un paso")
     List<String> pasos,
 
-    List<EtiquetaReceta> etiquetas,
+    List<String> etiquetas,
 
     boolean favorita
 ) {}

@@ -1,12 +1,9 @@
 package com.familyfood.infrastructure.adapter.persistence.entities;
 
-import com.familyfood.domain.enums.EtiquetaReceta;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -60,8 +57,7 @@ public class RecipeEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "recipe_etiquetas", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "etiqueta")
-    @Enumerated(EnumType.STRING)
-    private List<EtiquetaReceta> etiquetas;
+    private List<String> etiquetas;
 
     @Column
     private String imagen;
