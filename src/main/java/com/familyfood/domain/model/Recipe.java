@@ -1,6 +1,5 @@
 package com.familyfood.domain.model;
 
-import com.familyfood.domain.enums.EtiquetaReceta;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,7 @@ public class Recipe {
     private Integer raciones;
     private List<RecipeIngredient> ingredientes;
     private List<String> pasos;
-    private List<EtiquetaReceta> etiquetas;
+    private List<String> etiquetas;
     private String imagen;
     private boolean favorita;
     private UUID userId;

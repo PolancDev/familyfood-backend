@@ -6,7 +6,6 @@ import com.familyfood.application.dto.recipe.RecipeResponse;
 import com.familyfood.application.dto.recipe.UpdateRecipeRequest;
 import com.familyfood.application.mapper.RecipeMapper;
 import com.familyfood.application.port.repository.RecipeRepository;
-import com.familyfood.domain.enums.EtiquetaReceta;
 import com.familyfood.domain.exception.RecipeNotFoundException;
 import com.familyfood.domain.model.Recipe;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +27,7 @@ public class RecipeService {
         if (Boolean.TRUE.equals(favoritas)) {
             recipes = recipeRepository.findByFavoritaTrueAndUserId(userId);
         } else if (etiqueta != null && !etiqueta.isBlank()) {
-            try {
-                EtiquetaReceta etiquetaReceta = EtiquetaReceta.valueOf(etiqueta.toUpperCase());
-                recipes = recipeRepository.findByEtiquetasContainsAndUserId(etiquetaReceta, userId);
-            } catch (IllegalArgumentException e) {
-                recipes = List.of();
-            }
+            recipes = recipeRepository.findByEtiquetasContainsAndUserId(etiqueta.toUpperCase(), userId);
         } else if (busqueda != null && !busqueda.isBlank()) {
             recipes = recipeRepository.findByNombreContainingIgnoreCaseAndUserId(busqueda, userId);
         } else {
@@ -66,6 +60,7 @@ public class RecipeService {
         updatedRecipe.setUserId(userId);
         updatedRecipe.setFavorita(existingRecipe.isFavorita());
         updatedRecipe.setImagen(existingRecipe.getImagen());
+        updatedRecipe.setVersion(existingRecipe.getVersion());
 
         Recipe savedRecipe = recipeRepository.save(updatedRecipe);
         log.info("Receta actualizada: {} con id: {}", savedRecipe.getNombre(), savedRecipe.getId());

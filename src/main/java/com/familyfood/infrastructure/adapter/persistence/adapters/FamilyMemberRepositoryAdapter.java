@@ -76,6 +76,7 @@ public class FamilyMemberRepositoryAdapter implements FamilyMemberRepository {
                 .familyGroupId(entity.getFamilyGroupId())
                 .role(entity.getRole())
                 .joinedAt(entity.getJoinedAt())
+                .version(entity.getVersion())
                 .build();
     }
 
@@ -98,6 +99,7 @@ public class FamilyMemberRepositoryAdapter implements FamilyMemberRepository {
                 .familyGroupId(domain.getFamilyGroupId())
                 .role(domain.getRole())
                 .joinedAt(domain.getJoinedAt())
+                .version(domain.getVersion())
                 .build();
     }
 }

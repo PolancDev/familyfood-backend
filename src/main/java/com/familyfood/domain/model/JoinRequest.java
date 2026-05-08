@@ -20,6 +20,9 @@ public class JoinRequest {
     private JoinRequestStatus status;
     private LocalDateTime createdAt;
 
+    @Builder.Default
+    private Long version = 0L;
+
     public static JoinRequest create(UUID userId, UUID familyGroupId) {
         return JoinRequest.builder()
                 .id(UUID.randomUUID())
@@ -27,6 +30,7 @@ public class JoinRequest {
                 .familyGroupId(familyGroupId)
                 .status(JoinRequestStatus.PENDING)
                 .createdAt(LocalDateTime.now())
+                .version(0L)
                 .build();
     }
 

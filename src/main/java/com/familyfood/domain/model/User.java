@@ -24,6 +24,9 @@ public class User {
     private Preferences preferencias;
     private Role role;
 
+    @Builder.Default
+    private Long version = 0L;
+
     public static User create(String email, String encodedPassword, String nombre) {
         return User.builder()
                 .id(UUID.randomUUID())

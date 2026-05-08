@@ -39,6 +39,10 @@ public class FamilyMemberEntity {
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
     @PrePersist
     protected void onCreate() {
         if (joinedAt == null) {
