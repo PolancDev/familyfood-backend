@@ -35,6 +35,9 @@ public class FamilyGroupEntity {
     @Column(nullable = false)
     private Long version;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {

@@ -3,6 +3,7 @@ package com.familyfood.infrastructure.adapter.web;
 import com.familyfood.application.dto.family.CreateFamilyRequest;
 import com.familyfood.application.dto.family.FamilyMemberResponse;
 import com.familyfood.application.dto.family.FamilyResponse;
+import com.familyfood.application.dto.family.FamilySearchResponse;
 import com.familyfood.application.dto.family.JoinRequestResponse;
 import com.familyfood.application.service.FamilyService;
 import com.familyfood.infrastructure.adapter.security.CustomUserDetails;
@@ -13,12 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -87,6 +90,23 @@ public class FamilyController {
     }
 
     /**
+     * Busca grupos familiares por nombre (autocomplete).
+     *
+     * @param query       término de búsqueda
+     * @param userDetails datos del usuario autenticado
+     * @return lista de grupos que coinciden con la búsqueda
+     */
+    @GetMapping("/buscar")
+    public ResponseEntity<List<FamilySearchResponse>> searchFamilies(
+            final @RequestParam("q") String query,
+            final @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = extractUserId(userDetails);
+        log.info("Búsqueda de grupos familiares: query='{}', usuario={}", query, userId);
+        List<FamilySearchResponse> results = familyService.searchFamilies(query, userId);
+        return ResponseEntity.ok(results);
+    }
+
+    /**
      * Obtiene los miembros de un grupo familiar.
      *
      * @param userDetails datos del usuario autenticado
@@ -101,6 +121,21 @@ public class FamilyController {
         log.info("Obteniendo miembros del grupo: {}, usuario={}", id, userId);
         List<FamilyMemberResponse> members = familyService.getMembers(id);
         return ResponseEntity.ok(members);
+    }
+
+    /**
+     * Obtiene las solicitudes pendientes del usuario logueado.
+     *
+     * @param userDetails datos del usuario autenticado
+     * @return lista de solicitudes pendientes del usuario
+     */
+    @GetMapping("/mis-solicitudes")
+    public ResponseEntity<List<JoinRequestResponse>> getMyPendingRequests(
+            final @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = extractUserId(userDetails);
+        log.info("Obteniendo solicitudes pendientes del usuario: {}", userId);
+        List<JoinRequestResponse> requests = familyService.getMyPendingRequests(userId);
+        return ResponseEntity.ok(requests);
     }
 
     /**
@@ -152,6 +187,44 @@ public class FamilyController {
         log.info("Rechazando solicitud: {}, admin={}", requestId, adminUserId);
         familyService.rejectJoinRequest(requestId, adminUserId);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Transfiere el rol de administrador a otro miembro del grupo.
+     * Solo el ADMIN actual puede transferir. El target debe ser miembro CONSUMER.
+     *
+     * @param userDetails datos del usuario autenticado
+     * @param id          ID del grupo familiar
+     * @param memberId    ID del miembro que recibirá el rol de ADMIN
+     * @return respuesta vacía con código 200
+     */
+    @PutMapping("/{id}/transferir-admin/{memberId}")
+    public ResponseEntity<Void> transferAdmin(
+            final @AuthenticationPrincipal UserDetails userDetails,
+            final @PathVariable UUID id,
+            final @PathVariable UUID memberId) {
+        UUID adminUserId = extractUserId(userDetails);
+        log.info("Solicitud de transferencia de admin: grupo={}, nuevoAdmin={}, adminActual={}",
+                id, memberId, adminUserId);
+        familyService.transferAdmin(id, adminUserId, memberId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Elimina (soft delete) un grupo familiar. Solo el ADMIN puede hacerlo.
+     *
+     * @param userDetails datos del usuario autenticado
+     * @param id          ID del grupo familiar
+     * @return respuesta vacía con código 204
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFamily(
+            final @AuthenticationPrincipal UserDetails userDetails,
+            final @PathVariable UUID id) {
+        UUID adminUserId = extractUserId(userDetails);
+        log.info("Solicitud de eliminación de grupo familiar: grupo={}, admin={}", id, adminUserId);
+        familyService.deleteFamily(id, adminUserId);
+        return ResponseEntity.noContent().build();
     }
 
     /**

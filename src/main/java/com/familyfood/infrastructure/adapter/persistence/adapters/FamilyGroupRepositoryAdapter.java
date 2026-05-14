@@ -31,7 +31,9 @@ public class FamilyGroupRepositoryAdapter implements FamilyGroupRepository {
 
     @Override
     public Optional<FamilyGroup> findById(UUID id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(id)
+                .filter(entity -> entity.getDeletedAt() == null)
+                .map(this::toDomain);
     }
 
     @Override
@@ -53,6 +55,21 @@ public class FamilyGroupRepositoryAdapter implements FamilyGroupRepository {
         return repository.existsById(id);
     }
 
+    @Override
+    public List<FamilyGroup> searchByName(String query) {
+        return repository.searchByName(query).stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(FamilyGroup familyGroup) {
+        repository.findById(familyGroup.getId()).ifPresent(entity -> {
+            entity.setDeletedAt(familyGroup.getDeletedAt());
+            repository.save(entity);
+        });
+    }
+
     private FamilyGroup toDomain(FamilyGroupEntity entity) {
         if (entity == null) return null;
         return FamilyGroup.builder()
@@ -61,6 +78,7 @@ public class FamilyGroupRepositoryAdapter implements FamilyGroupRepository {
                 .createdBy(entity.getCreatedBy())
                 .createdAt(entity.getCreatedAt())
                 .version(entity.getVersion())
+                .deletedAt(entity.getDeletedAt())
                 .build();
     }
 
@@ -82,6 +100,7 @@ public class FamilyGroupRepositoryAdapter implements FamilyGroupRepository {
                 .createdBy(domain.getCreatedBy())
                 .createdAt(domain.getCreatedAt())
                 .version(domain.getVersion())
+                .deletedAt(domain.getDeletedAt())
                 .build();
     }
 }
