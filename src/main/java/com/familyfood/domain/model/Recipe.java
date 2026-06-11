@@ -24,6 +24,7 @@ public class Recipe {
     private String imagen;
     private boolean favorita;
     private UUID userId;
+    private UUID familyGroupId;
 
     @Builder.Default
     private Long version = 0L;

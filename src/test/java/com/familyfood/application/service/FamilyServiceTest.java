@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("FamilyService Tests")
+@DisplayName("Tests de FamilyService")
 class FamilyServiceTest {
 
     @Mock
@@ -152,7 +152,7 @@ class FamilyServiceTest {
     class CreateFamilyTests {
 
         @Test
-        @DisplayName("Should create family successfully")
+        @DisplayName("Debería crear familia correctamente")
         void shouldCreateFamilySuccessfully() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -176,7 +176,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when user not found")
+        @DisplayName("Debería lanzar excepción cuando el usuario no se encuentra")
         void shouldThrowExceptionWhenUserNotFound() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -197,7 +197,7 @@ class FamilyServiceTest {
     class JoinFamilyTests {
 
         @Test
-        @DisplayName("Should create join request successfully")
+        @DisplayName("Debería crear solicitud de unión correctamente")
         void shouldCreateJoinRequestSuccessfully() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -219,7 +219,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when user not found")
+        @DisplayName("Debería lanzar excepción cuando el usuario no se encuentra")
         void shouldThrowExceptionWhenUserNotFound() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -233,7 +233,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when family group not found")
+        @DisplayName("Debería lanzar excepción cuando el grupo familiar no se encuentra")
         void shouldThrowExceptionWhenFamilyGroupNotFound() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -246,7 +246,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when user is already a member")
+        @DisplayName("Debería lanzar excepción cuando el usuario ya es miembro")
         void shouldThrowExceptionWhenAlreadyMember() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -262,7 +262,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when pending request already exists")
+        @DisplayName("Debería lanzar excepción cuando ya existe una solicitud pendiente")
         void shouldThrowExceptionWhenPendingRequestExists() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -285,7 +285,7 @@ class FamilyServiceTest {
     class ApproveJoinRequestTests {
 
         @Test
-        @DisplayName("Should approve join request successfully")
+        @DisplayName("Debería aprobar solicitud de unión correctamente")
         void shouldApproveJoinRequestSuccessfully() {
             // Given
             when(joinRequestRepository.findById(requestId)).thenReturn(Optional.of(pendingJoinRequest));
@@ -313,7 +313,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when join request not found")
+        @DisplayName("Debería lanzar excepción cuando la solicitud no se encuentra")
         void shouldThrowExceptionWhenJoinRequestNotFound() {
             // Given
             when(joinRequestRepository.findById(requestId)).thenReturn(Optional.empty());
@@ -325,7 +325,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when admin is not a member")
+        @DisplayName("Debería lanzar excepción cuando el admin no es miembro")
         void shouldThrowExceptionWhenAdminNotMember() {
             // Given
             when(joinRequestRepository.findById(requestId)).thenReturn(Optional.of(pendingJoinRequest));
@@ -340,7 +340,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when admin is not ADMIN role")
+        @DisplayName("Debería lanzar excepción cuando el admin no tiene rol ADMIN")
         void shouldThrowExceptionWhenAdminNotAdminRole() {
             // Given
             FamilyMember consumerAsMember = FamilyMember.builder()
@@ -363,7 +363,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when request already processed")
+        @DisplayName("Debería lanzar excepción cuando la solicitud ya ha sido procesada")
         void shouldThrowExceptionWhenRequestAlreadyProcessed() {
             // Given
             JoinRequest approvedRequest = JoinRequest.builder()
@@ -391,7 +391,7 @@ class FamilyServiceTest {
     class RejectJoinRequestTests {
 
         @Test
-        @DisplayName("Should reject join request successfully")
+        @DisplayName("Debería rechazar solicitud de unión correctamente")
         void shouldRejectJoinRequestSuccessfully() {
             // Given
             when(joinRequestRepository.findById(requestId)).thenReturn(Optional.of(pendingJoinRequest));
@@ -413,7 +413,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when join request not found")
+        @DisplayName("Debería lanzar excepción cuando la solicitud no se encuentra")
         void shouldThrowExceptionWhenJoinRequestNotFound() {
             // Given
             when(joinRequestRepository.findById(requestId)).thenReturn(Optional.empty());
@@ -425,7 +425,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when request already processed")
+        @DisplayName("Debería lanzar excepción cuando la solicitud ya ha sido procesada")
         void shouldThrowExceptionWhenRequestAlreadyProcessed() {
             // Given
             JoinRequest rejectedRequest = JoinRequest.builder()
@@ -453,7 +453,7 @@ class FamilyServiceTest {
     class GetPendingRequestsTests {
 
         @Test
-        @DisplayName("Should return pending requests successfully")
+        @DisplayName("Debería devolver solicitudes pendientes correctamente")
         void shouldReturnPendingRequestsSuccessfully() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
@@ -480,7 +480,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when family group not found")
+        @DisplayName("Debería lanzar excepción cuando el grupo familiar no se encuentra")
         void shouldThrowExceptionWhenFamilyGroupNotFound() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.empty());
@@ -492,7 +492,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when user is not admin")
+        @DisplayName("Debería lanzar excepción cuando el usuario no es admin")
         void shouldThrowExceptionWhenUserNotAdmin() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
@@ -511,7 +511,7 @@ class FamilyServiceTest {
     class GetMembersTests {
 
         @Test
-        @DisplayName("Should return members successfully")
+        @DisplayName("Debería devolver miembros correctamente")
         void shouldReturnMembersSuccessfully() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
@@ -536,7 +536,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when family group not found")
+        @DisplayName("Debería lanzar excepción cuando el grupo familiar no se encuentra")
         void shouldThrowExceptionWhenFamilyGroupNotFound() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.empty());
@@ -553,7 +553,7 @@ class FamilyServiceTest {
     class GetUserFamiliesTests {
 
         @Test
-        @DisplayName("Should return user families successfully")
+        @DisplayName("Debería devolver familias del usuario correctamente")
         void shouldReturnUserFamiliesSuccessfully() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -576,7 +576,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when user not found")
+        @DisplayName("Debería lanzar excepción cuando el usuario no se encuentra")
         void shouldThrowExceptionWhenUserNotFound() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -591,11 +591,11 @@ class FamilyServiceTest {
     }
 
     @Nested
-    @DisplayName("Soft Delete")
+    @DisplayName("Borrado lógico")
     class SoftDeleteTests {
 
         @Test
-        @DisplayName("should soft delete family group when admin")
+        @DisplayName("debería eliminar lógicamente el grupo familiar cuando es admin")
         void shouldSoftDeleteFamilyGroupWhenAdmin() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
@@ -611,7 +611,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("should throw when non-admin tries to delete")
+        @DisplayName("debería lanzar excepción cuando un no-admin intenta eliminar")
         void shouldThrowWhenNonAdminTriesToDelete() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
@@ -629,7 +629,7 @@ class FamilyServiceTest {
     class SearchFamiliesTests {
 
         @Test
-        @DisplayName("should return matching families")
+        @DisplayName("debería devolver familias que coincidan")
         void shouldReturnMatchingFamilies() {
             // Given
             String query = "García";
@@ -647,7 +647,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("should return empty list when query is empty")
+        @DisplayName("debería devolver lista vacía cuando la consulta está vacía")
         void shouldReturnEmptyListWhenQueryIsEmpty() {
             // When
             List<FamilySearchResponse> results = familyService.searchFamilies("", userId);
@@ -663,7 +663,7 @@ class FamilyServiceTest {
     class MyPendingRequestsTests {
 
         @Test
-        @DisplayName("should return pending requests for user")
+        @DisplayName("debería devolver solicitudes pendientes del usuario")
         void shouldReturnPendingRequestsForUser() {
             // Given
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -681,7 +681,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("should return empty list when no pending requests")
+        @DisplayName("debería devolver lista vacía cuando no hay solicitudes pendientes")
         void shouldReturnEmptyListWhenNoPendingRequests() {
             // Given
             JoinRequest approvedRequest = JoinRequest.builder()
@@ -708,7 +708,7 @@ class FamilyServiceTest {
     class TransferAdminTests {
 
         @Test
-        @DisplayName("should transfer admin role successfully")
+        @DisplayName("debería transferir rol de admin correctamente")
         void shouldTransferAdminSuccessfully() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
@@ -727,7 +727,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("should throw when target is not a member")
+        @DisplayName("debería lanzar excepción cuando el destino no es miembro")
         void shouldThrowWhenTargetIsNotMember() {
             // Given
             UUID nonMemberId = UUID.randomUUID();
@@ -743,7 +743,7 @@ class FamilyServiceTest {
         }
 
         @Test
-        @DisplayName("should throw when target is already admin")
+        @DisplayName("debería lanzar excepción cuando el destino ya es admin")
         void shouldThrowWhenTargetIsAlreadyAdmin() {
             // Given
             when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));

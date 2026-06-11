@@ -18,6 +18,7 @@ public interface RecipeMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "imagen", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "familyGroupId", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "favorita", source = "favorita")
     Recipe toDomainFromCreate(CreateRecipeRequest request);
@@ -26,9 +27,11 @@ public interface RecipeMapper {
     @Mapping(target = "favorita", ignore = true)
     @Mapping(target = "imagen", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "familyGroupId", ignore = true)
     @Mapping(target = "version", ignore = true)
     Recipe toDomainFromUpdate(UpdateRecipeRequest request);
 
+    @Mapping(target = "nombreCreador", ignore = true)
     RecipeResponse toResponse(Recipe recipe);
 
     List<RecipeResponse> toResponseList(List<Recipe> recipes);

@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-@DisplayName("RecipeMapper Tests")
+@DisplayName("Tests de RecipeMapper")
 class RecipeMapperTest {
 
     private RecipeMapper recipeMapper;
@@ -75,7 +75,7 @@ class RecipeMapperTest {
     class ToResponse {
 
         @Test
-        @DisplayName("should map all fields from Recipe to RecipeResponse")
+        @DisplayName("debería mapear todos los campos de Recipe a RecipeResponse")
         void shouldMapAllFields() {
             // Given
             Recipe recipe = fullRecipe;
@@ -109,7 +109,7 @@ class RecipeMapperTest {
         }
 
         @Test
-        @DisplayName("should map recipe with empty ingredients list")
+        @DisplayName("debería mapear receta con lista de ingredientes vacía")
         void shouldMapWithEmptyIngredients() {
             // Given
             Recipe recipe = Recipe.builder()
@@ -138,7 +138,7 @@ class RecipeMapperTest {
         }
 
         @Test
-        @DisplayName("should map recipe with null optional fields")
+        @DisplayName("debería mapear receta con campos opcionales nulos")
         void shouldMapWithNullOptionalFields() {
             // Given
             Recipe recipe = Recipe.builder()
@@ -174,7 +174,7 @@ class RecipeMapperTest {
     class ToResponseList {
 
         @Test
-        @DisplayName("should map list of Recipes to list of RecipeResponses")
+        @DisplayName("debería mapear lista de Recipes a lista de RecipeResponses")
         void shouldMapList() {
             // Given
             Recipe recipe2 = Recipe.builder()
@@ -203,7 +203,7 @@ class RecipeMapperTest {
         }
 
         @Test
-        @DisplayName("should return empty list when input list is empty")
+        @DisplayName("debería devolver lista vacía cuando la lista de entrada está vacía")
         void shouldReturnEmptyList() {
             // Given
             List<Recipe> emptyList = Collections.emptyList();
@@ -221,7 +221,7 @@ class RecipeMapperTest {
     class ToDomainFromCreate {
 
         @Test
-        @DisplayName("should map all fields from CreateRecipeRequest to Recipe")
+        @DisplayName("debería mapear todos los campos de CreateRecipeRequest a Recipe")
         void shouldMapAllFields() {
             // Given
             CreateRecipeRequest request = new CreateRecipeRequest(
@@ -266,7 +266,7 @@ class RecipeMapperTest {
         }
 
         @Test
-        @DisplayName("should map request with favorita=false")
+        @DisplayName("debería mapear request con favorita=false")
         void shouldMapWithFavoritaFalse() {
             // Given
             CreateRecipeRequest request = new CreateRecipeRequest(
@@ -296,7 +296,7 @@ class RecipeMapperTest {
     class ToDomainFromUpdate {
 
         @Test
-        @DisplayName("should map all fields from UpdateRecipeRequest to Recipe")
+        @DisplayName("debería mapear todos los campos de UpdateRecipeRequest a Recipe")
         void shouldMapAllFields() {
             // Given
             UpdateRecipeRequest request = new UpdateRecipeRequest(
@@ -342,7 +342,7 @@ class RecipeMapperTest {
     class ToIngredientDTO {
 
         @Test
-        @DisplayName("should map RecipeIngredient to RecipeIngredientDTO")
+        @DisplayName("debería mapear RecipeIngredient a RecipeIngredientDTO")
         void shouldMapIngredient() {
             // Given
             RecipeIngredient ingredient = ingredient1;
@@ -363,7 +363,7 @@ class RecipeMapperTest {
     class ToIngredientDomain {
 
         @Test
-        @DisplayName("should map RecipeIngredientDTO to RecipeIngredient")
+        @DisplayName("debería mapear RecipeIngredientDTO a RecipeIngredient")
         void shouldMapDTOToDomain() {
             // Given
             RecipeIngredientDTO dto = ingredientDTO1;

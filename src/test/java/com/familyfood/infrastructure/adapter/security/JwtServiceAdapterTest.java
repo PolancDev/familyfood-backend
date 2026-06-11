@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("JwtServiceAdapter Tests")
+@DisplayName("Tests de JwtServiceAdapter")
 class JwtServiceAdapterTest {
 
     @InjectMocks
@@ -40,11 +40,11 @@ class JwtServiceAdapterTest {
     }
 
     @Nested
-    @DisplayName("Generate Token Tests")
+    @DisplayName("Tests de generación de token")
     class GenerateTokenTests {
 
         @Test
-        @DisplayName("Should generate JWT token successfully")
+        @DisplayName("Debería generar token JWT correctamente")
         void shouldGenerateJwtTokenSuccessfully() {
             // When
             String token = jwtServiceAdapter.generateToken(testUser);
@@ -56,7 +56,7 @@ class JwtServiceAdapterTest {
         }
 
         @Test
-        @DisplayName("Should generate unique tokens for different users")
+        @DisplayName("Debería generar tokens únicos para usuarios diferentes")
         void shouldGenerateUniqueTokensForDifferentUsers() {
             // Given
             User anotherUser = User.builder()
@@ -77,11 +77,11 @@ class JwtServiceAdapterTest {
     }
 
     @Nested
-    @DisplayName("Extract Email Tests")
+    @DisplayName("Tests de extracción de email")
     class ExtractEmailTests {
 
         @Test
-        @DisplayName("Should extract email from token")
+        @DisplayName("Debería extraer email del token")
         void shouldExtractEmailFromToken() {
             // Given
             String token = jwtServiceAdapter.generateToken(testUser);
@@ -95,11 +95,11 @@ class JwtServiceAdapterTest {
     }
 
     @Nested
-    @DisplayName("Validate Token Tests")
+    @DisplayName("Tests de validación de token")
     class ValidateTokenTests {
 
         @Test
-        @DisplayName("Should validate token for correct email")
+        @DisplayName("Debería validar token para email correcto")
         void shouldValidateTokenForCorrectEmail() {
             // Given
             String token = jwtServiceAdapter.generateToken(testUser);
@@ -112,7 +112,7 @@ class JwtServiceAdapterTest {
         }
 
         @Test
-        @DisplayName("Should not validate token for incorrect email")
+        @DisplayName("No debería validar token para email incorrecto")
         void shouldNotValidateTokenForIncorrectEmail() {
             // Given
             String token = jwtServiceAdapter.generateToken(testUser);
@@ -125,7 +125,7 @@ class JwtServiceAdapterTest {
         }
 
         @Test
-        @DisplayName("Should not validate invalid token")
+        @DisplayName("No debería validar token inválido")
         void shouldNotValidateInvalidToken() {
             // Given
             String invalidToken = "invalid.token.here";
@@ -138,7 +138,7 @@ class JwtServiceAdapterTest {
         }
 
         @Test
-        @DisplayName("Should not validate token with wrong format")
+        @DisplayName("No debería validar token con formato incorrecto")
         void shouldNotValidateTokenWithWrongFormat() {
             // Given
             String malformedToken = "not.a.jwt.token";

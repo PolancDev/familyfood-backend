@@ -13,5 +13,6 @@ public record RecipeResponse(
     List<String> pasos,
     List<String> etiquetas,
     String imagen,
-    boolean favorita
+    boolean favorita,
+    String nombreCreador
 ) {}

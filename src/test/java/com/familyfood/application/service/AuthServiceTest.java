@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("AuthService Tests")
+@DisplayName("Tests de AuthService")
 class AuthServiceTest {
 
     @Mock
@@ -79,11 +79,11 @@ class AuthServiceTest {
     }
 
     @Nested
-    @DisplayName("Registro Tests")
+    @DisplayName("Tests de Registro")
     class RegistroTests {
 
         @Test
-        @DisplayName("Should register user successfully")
+        @DisplayName("Debería registrar usuario correctamente")
         void shouldRegisterUserSuccessfully() {
             // Given
             when(userRepository.existsByEmail(anyString())).thenReturn(false);
@@ -116,7 +116,7 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when email already exists")
+        @DisplayName("Debería lanzar excepción cuando el email ya existe")
         void shouldThrowExceptionWhenEmailAlreadyExists() {
             // Given
             when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -133,11 +133,11 @@ class AuthServiceTest {
     }
 
     @Nested
-    @DisplayName("Login Tests")
+    @DisplayName("Tests de Login")
     class LoginTests {
 
         @Test
-        @DisplayName("Should login user successfully")
+        @DisplayName("Debería iniciar sesión correctamente")
         void shouldLoginUserSuccessfully() {
             // Given
             when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
@@ -171,7 +171,7 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when user not found")
+        @DisplayName("Debería lanzar excepción cuando el usuario no se encuentra")
         void shouldThrowExceptionWhenUserNotFound() {
             // Given
             when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
@@ -186,7 +186,7 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when password is incorrect")
+        @DisplayName("Debería lanzar excepción cuando la contraseña es incorrecta")
         void shouldThrowExceptionWhenPasswordIsIncorrect() {
             // Given
             when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));

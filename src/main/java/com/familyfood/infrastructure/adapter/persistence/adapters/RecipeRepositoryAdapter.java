@@ -69,6 +69,36 @@ public class RecipeRepositoryAdapter implements RecipeRepository {
     }
 
     @Override
+    public List<Recipe> findByFamilyGroupId(UUID familyGroupId) {
+        return entityMapper.toDomainList(
+                repository.findByFamilyGroupIdOrderByNombreAsc(familyGroupId));
+    }
+
+    @Override
+    public List<Recipe> findByFavoritaTrueAndFamilyGroupId(UUID familyGroupId) {
+        return entityMapper.toDomainList(
+                repository.findByFavoritaTrueAndFamilyGroupIdOrderByNombreAsc(familyGroupId));
+    }
+
+    @Override
+    public List<Recipe> findByEtiquetasContainsAndFamilyGroupId(String etiqueta, UUID familyGroupId) {
+        return entityMapper.toDomainList(
+                repository.findByEtiquetasContainsAndFamilyGroupIdOrderByNombreAsc(etiqueta, familyGroupId));
+    }
+
+    @Override
+    public List<Recipe> findByNombreContainingIgnoreCaseAndFamilyGroupId(String busqueda, UUID familyGroupId) {
+        return entityMapper.toDomainList(
+                repository.findByNombreContainingIgnoreCaseAndFamilyGroupIdOrderByNombreAsc(busqueda, familyGroupId));
+    }
+
+    @Override
+    public List<Recipe> findByUserIdAndFamilyGroupIdIsNull(UUID userId) {
+        return entityMapper.toDomainList(
+                repository.findByUserIdAndFamilyGroupIdIsNullOrderByNombreAsc(userId));
+    }
+
+    @Override
     public void deleteById(UUID id) {
         repository.deleteById(id);
     }

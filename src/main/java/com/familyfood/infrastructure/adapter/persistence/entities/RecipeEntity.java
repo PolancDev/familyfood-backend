@@ -68,6 +68,9 @@ public class RecipeEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    @Column(name = "family_group_id")
+    private UUID familyGroupId;
+
     @Version
     @Column(nullable = false)
     private Long version;

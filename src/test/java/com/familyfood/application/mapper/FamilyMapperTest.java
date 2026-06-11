@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("FamilyMapper Tests")
+@DisplayName("Tests de FamilyMapper")
 class FamilyMapperTest {
 
     private FamilyMapper familyMapper;
@@ -80,7 +80,7 @@ class FamilyMapperTest {
     class ToFamilyResponse {
 
         @Test
-        @DisplayName("should map all fields from FamilyGroup to FamilyResponse")
+        @DisplayName("debería mapear todos los campos de FamilyGroup a FamilyResponse")
         void shouldMapAllFields() {
             // Given
             FamilyGroup group = testFamilyGroup;
@@ -103,7 +103,7 @@ class FamilyMapperTest {
     class ToFamilyMemberResponse {
 
         @Test
-        @DisplayName("should map FamilyMember and User to FamilyMemberResponse")
+        @DisplayName("debería mapear FamilyMember y User a FamilyMemberResponse")
         void shouldMapAllFields() {
             // Given
             FamilyMember member = testMember;
@@ -123,7 +123,7 @@ class FamilyMapperTest {
         }
 
         @Test
-        @DisplayName("should map with null user fields")
+        @DisplayName("debería mapear con campos de user nulos")
         void shouldMapWithNullUser() {
             // Given
             FamilyMember member = testMember;
@@ -149,7 +149,7 @@ class FamilyMapperTest {
     class ToJoinRequestResponse {
 
         @Test
-        @DisplayName("should map JoinRequest, User and FamilyGroup to JoinRequestResponse")
+        @DisplayName("debería mapear JoinRequest, User y FamilyGroup a JoinRequestResponse")
         void shouldMapAllFields() {
             // Given
             JoinRequest joinRequest = testJoinRequest;
@@ -172,7 +172,7 @@ class FamilyMapperTest {
         }
 
         @Test
-        @DisplayName("should map with null user and group fields")
+        @DisplayName("debería mapear con campos de user y group nulos")
         void shouldMapWithNullFields() {
             // Given
             JoinRequest joinRequest = testJoinRequest;

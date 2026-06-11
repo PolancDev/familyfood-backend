@@ -43,7 +43,9 @@ public class ApplicationServiceConfig {
 
     @Bean
     public RecipeService recipeService(RecipeRepository recipeRepository,
-                                       RecipeMapper recipeMapper) {
-        return new RecipeService(recipeRepository, recipeMapper);
+                                       RecipeMapper recipeMapper,
+                                       FamilyMemberRepository familyMemberRepository,
+                                       UserRepository userRepository) {
+        return new RecipeService(recipeRepository, recipeMapper, familyMemberRepository, userRepository);
     }
 }
