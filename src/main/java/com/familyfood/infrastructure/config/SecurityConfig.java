@@ -55,10 +55,11 @@ public class SecurityConfig {
                     // ===== RECETAS =====
                     // CONSUMER: lectura + marcar favorita
                     .requestMatchers(HttpMethod.GET, "/api/v1/recetas").hasAnyRole("ADMIN", "CONSUMER")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/recetas").hasAnyRole("ADMIN", "CONSUMER")
                     .requestMatchers(HttpMethod.GET, "/api/v1/recetas/{id}").hasAnyRole("ADMIN", "CONSUMER")
                     .requestMatchers(HttpMethod.POST, "/api/v1/recetas/{id}/favorita").hasAnyRole("ADMIN", "CONSUMER")
                     // ADMIN: acceso total
-                    .requestMatchers(HttpMethod.POST, "/api/v1/recetas").hasRole("ADMIN")
+                    
                     .requestMatchers(HttpMethod.PUT, "/api/v1/recetas/{id}").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/recetas/{id}").hasRole("ADMIN")
 
