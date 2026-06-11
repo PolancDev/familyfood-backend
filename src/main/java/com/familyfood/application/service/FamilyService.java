@@ -147,6 +147,28 @@ public class FamilyService {
     }
 
     /**
+     * Obtiene las solicitudes pendientes del usuario logueado.
+     */
+    @Transactional(readOnly = true)
+    public List<JoinRequestResponse> getMyPendingRequests(UUID userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado: " + userId));
+
+        List<JoinRequest> requests = joinRequestRepository.findByUserId(userId);
+
+        return requests.stream()
+                .filter(request -> request.getStatus() == JoinRequestStatus.PENDING)
+                .map(request -> {
+                    FamilyGroup group = familyGroupRepository.findById(request.getFamilyGroupId())
+                            .orElse(null);
+                    User user = userRepository.findById(request.getUserId())
+                            .orElse(null);
+                    return familyMapper.toJoinRequestResponse(request, user, group);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Obtiene las solicitudes pendientes de un grupo. Solo el ADMIN puede verlas.
      */
     @Transactional(readOnly = true)
@@ -209,6 +231,84 @@ public class FamilyService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Elimina (soft delete) un grupo familiar. Solo el ADMIN puede hacerlo.
+     */
+    @Transactional
+    public void deleteFamily(UUID familyId, UUID adminUserId) {
+        FamilyGroup group = familyGroupRepository.findById(familyId)
+                .orElseThrow(() -> new FamilyGroupNotFoundException("Grupo familiar no encontrado"));
+
+        validateAdmin(adminUserId, familyId);
+
+        group.softDelete();
+        familyGroupRepository.delete(group);
+
+        log.info("Grupo familiar {} eliminado por el administrador {}", familyId, adminUserId);
+    }
+
+    /**
+     * Busca grupos familiares por nombre (autocomplete).
+     * Solo retorna grupos activos (no eliminados).
+     *
+     * @param query  término de búsqueda
+     * @param userId ID del usuario que realiza la búsqueda
+     * @return lista de grupos que coinciden con la búsqueda
+     */
+    @Transactional(readOnly = true)
+    public List<FamilySearchResponse> searchFamilies(String query, UUID userId) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+
+        List<FamilyGroup> groups = familyGroupRepository.searchByName(query.trim());
+
+        return groups.stream()
+                .map(group -> {
+                    long memberCount = familyMemberRepository.countByFamilyGroupId(group.getId());
+                    return new FamilySearchResponse(group.getId(), group.getName(), memberCount);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Transfiere el rol de administrador a otro miembro del grupo.
+     * El ADMIN actual pasa a ser CONSUMER y el miembro target pasa a ser ADMIN.
+     *
+     * @param familyId           ID del grupo familiar
+     * @param currentAdminUserId ID del administrador actual
+     * @param targetMemberUserId ID del miembro que recibirá el rol de ADMIN
+     */
+    @Transactional
+    public void transferAdmin(UUID familyId, UUID currentAdminUserId, UUID targetMemberUserId) {
+        FamilyGroup group = familyGroupRepository.findById(familyId)
+                .orElseThrow(() -> new FamilyGroupNotFoundException(familyId));
+
+        validateAdmin(currentAdminUserId, familyId);
+
+        FamilyMember targetMember = familyMemberRepository
+                .findByUserIdAndFamilyGroupId(targetMemberUserId, familyId)
+                .orElseThrow(() -> new UnauthorizedException("El usuario seleccionado no es miembro del grupo"));
+
+        if (targetMember.getRole() == FamilyRole.ADMIN) {
+            throw new UnauthorizedException("El usuario seleccionado ya es administrador");
+        }
+
+        FamilyMember currentAdminMember = familyMemberRepository
+                .findByUserIdAndFamilyGroupId(currentAdminUserId, familyId)
+                .orElseThrow(() -> new UnauthorizedException("No se encontró tu membresía en el grupo"));
+
+        // Transferir roles (FamilyMember usa @Data con setters, es mutable)
+        currentAdminMember.setRole(FamilyRole.CONSUMER);
+        targetMember.setRole(FamilyRole.ADMIN);
+
+        familyMemberRepository.save(currentAdminMember);
+        familyMemberRepository.save(targetMember);
+
+        log.info("Admin transferido: grupo={}, nuevoAdmin={}, antiguoAdmin={}",
+                familyId, targetMemberUserId, currentAdminUserId);
     }
 
     /**

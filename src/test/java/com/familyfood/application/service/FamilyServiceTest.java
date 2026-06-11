@@ -2,6 +2,7 @@ package com.familyfood.application.service;
 
 import com.familyfood.application.dto.family.FamilyMemberResponse;
 import com.familyfood.application.dto.family.FamilyResponse;
+import com.familyfood.application.dto.family.FamilySearchResponse;
 import com.familyfood.application.dto.family.JoinRequestResponse;
 import com.familyfood.application.mapper.FamilyMapper;
 import com.familyfood.application.port.repository.FamilyGroupRepository;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -585,6 +587,174 @@ class FamilyServiceTest {
                     .hasMessageContaining("Usuario no encontrado");
 
             verify(familyGroupRepository, never()).findByMemberUserId(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Soft Delete")
+    class SoftDeleteTests {
+
+        @Test
+        @DisplayName("should soft delete family group when admin")
+        void shouldSoftDeleteFamilyGroupWhenAdmin() {
+            // Given
+            when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(adminUserId, familyId))
+                    .thenReturn(Optional.of(adminMember));
+
+            // When
+            familyService.deleteFamily(familyId, adminUserId);
+
+            // Then
+            assertThat(testFamilyGroup.getDeletedAt()).isNotNull();
+            verify(familyGroupRepository).delete(testFamilyGroup);
+        }
+
+        @Test
+        @DisplayName("should throw when non-admin tries to delete")
+        void shouldThrowWhenNonAdminTriesToDelete() {
+            // Given
+            when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(userId, familyId))
+                    .thenReturn(Optional.of(consumerMember));
+
+            // When & Then
+            assertThatThrownBy(() -> familyService.deleteFamily(familyId, userId))
+                    .isInstanceOf(UnauthorizedException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("Búsqueda de familias")
+    class SearchFamiliesTests {
+
+        @Test
+        @DisplayName("should return matching families")
+        void shouldReturnMatchingFamilies() {
+            // Given
+            String query = "García";
+            when(familyGroupRepository.searchByName(query)).thenReturn(List.of(testFamilyGroup));
+            when(familyMemberRepository.countByFamilyGroupId(familyId)).thenReturn(3L);
+
+            // When
+            List<FamilySearchResponse> results = familyService.searchFamilies(query, userId);
+
+            // Then
+            assertThat(results).hasSize(1);
+            assertThat(results.get(0).name()).isEqualTo("Familia Test");
+            assertThat(results.get(0).memberCount()).isEqualTo(3);
+            verify(familyGroupRepository).searchByName(query);
+        }
+
+        @Test
+        @DisplayName("should return empty list when query is empty")
+        void shouldReturnEmptyListWhenQueryIsEmpty() {
+            // When
+            List<FamilySearchResponse> results = familyService.searchFamilies("", userId);
+
+            // Then
+            assertThat(results).isEmpty();
+            verify(familyGroupRepository, never()).searchByName(anyString());
+        }
+    }
+
+    @Nested
+    @DisplayName("Mis solicitudes pendientes")
+    class MyPendingRequestsTests {
+
+        @Test
+        @DisplayName("should return pending requests for user")
+        void shouldReturnPendingRequestsForUser() {
+            // Given
+            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(joinRequestRepository.findByUserId(userId)).thenReturn(List.of(pendingJoinRequest));
+            when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
+            when(familyMapper.toJoinRequestResponse(pendingJoinRequest, testUser, testFamilyGroup))
+                    .thenReturn(testJoinRequestResponse);
+
+            // When
+            List<JoinRequestResponse> results = familyService.getMyPendingRequests(userId);
+
+            // Then
+            assertThat(results).hasSize(1);
+            verify(joinRequestRepository).findByUserId(userId);
+        }
+
+        @Test
+        @DisplayName("should return empty list when no pending requests")
+        void shouldReturnEmptyListWhenNoPendingRequests() {
+            // Given
+            JoinRequest approvedRequest = JoinRequest.builder()
+                    .id(UUID.randomUUID())
+                    .userId(userId)
+                    .familyGroupId(familyId)
+                    .status(JoinRequestStatus.APPROVED)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(joinRequestRepository.findByUserId(userId)).thenReturn(List.of(approvedRequest));
+
+            // When
+            List<JoinRequestResponse> results = familyService.getMyPendingRequests(userId);
+
+            // Then
+            assertThat(results).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("Transferir administración")
+    class TransferAdminTests {
+
+        @Test
+        @DisplayName("should transfer admin role successfully")
+        void shouldTransferAdminSuccessfully() {
+            // Given
+            when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(adminUserId, familyId))
+                    .thenReturn(Optional.of(adminMember));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(userId, familyId))
+                    .thenReturn(Optional.of(consumerMember));
+
+            // When
+            familyService.transferAdmin(familyId, adminUserId, userId);
+
+            // Then
+            assertThat(adminMember.getRole()).isEqualTo(FamilyRole.CONSUMER);
+            assertThat(consumerMember.getRole()).isEqualTo(FamilyRole.ADMIN);
+            verify(familyMemberRepository, times(2)).save(any(FamilyMember.class));
+        }
+
+        @Test
+        @DisplayName("should throw when target is not a member")
+        void shouldThrowWhenTargetIsNotMember() {
+            // Given
+            UUID nonMemberId = UUID.randomUUID();
+            when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(adminUserId, familyId))
+                    .thenReturn(Optional.of(adminMember));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(nonMemberId, familyId))
+                    .thenReturn(Optional.empty());
+
+            // When & Then
+            assertThatThrownBy(() -> familyService.transferAdmin(familyId, adminUserId, nonMemberId))
+                    .isInstanceOf(UnauthorizedException.class);
+        }
+
+        @Test
+        @DisplayName("should throw when target is already admin")
+        void shouldThrowWhenTargetIsAlreadyAdmin() {
+            // Given
+            when(familyGroupRepository.findById(familyId)).thenReturn(Optional.of(testFamilyGroup));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(adminUserId, familyId))
+                    .thenReturn(Optional.of(adminMember));
+            when(familyMemberRepository.findByUserIdAndFamilyGroupId(adminUserId, familyId))
+                    .thenReturn(Optional.of(adminMember));
+
+            // When & Then
+            assertThatThrownBy(() -> familyService.transferAdmin(familyId, adminUserId, adminUserId))
+                    .isInstanceOf(UnauthorizedException.class);
         }
     }
 }

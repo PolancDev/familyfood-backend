@@ -21,6 +21,8 @@ public class FamilyGroup {
     @Builder.Default
     private Long version = 0L;
 
+    private LocalDateTime deletedAt;
+
     public static FamilyGroup create(String name, UUID createdBy) {
         return FamilyGroup.builder()
                 .id(UUID.randomUUID())
@@ -28,5 +30,13 @@ public class FamilyGroup {
                 .createdBy(createdBy)
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isActive() {
+        return deletedAt == null;
     }
 }

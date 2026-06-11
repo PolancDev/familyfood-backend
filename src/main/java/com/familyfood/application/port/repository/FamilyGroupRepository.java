@@ -50,4 +50,19 @@ public interface FamilyGroupRepository {
      * @return true si existe
      */
     boolean existsById(UUID id);
+
+    /**
+     * Busca grupos por nombre (para autocomplete).
+     *
+     * @param query término de búsqueda
+     * @return lista de grupos que coinciden
+     */
+    List<FamilyGroup> searchByName(String query);
+
+    /**
+     * Elimina (soft delete) un grupo familiar.
+     *
+     * @param familyGroup grupo a eliminar
+     */
+    void delete(FamilyGroup familyGroup);
 }
