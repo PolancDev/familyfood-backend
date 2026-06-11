@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CustomUserDetailsService Tests")
+@DisplayName("Tests de CustomUserDetailsService")
 class CustomUserDetailsServiceTest {
 
     @Mock
@@ -64,11 +64,11 @@ class CustomUserDetailsServiceTest {
     }
 
     @Nested
-    @DisplayName("Load User By Username Tests")
+    @DisplayName("Tests de carga de usuario por nombre")
     class LoadUserByUsernameTests {
 
         @Test
-        @DisplayName("Should load user successfully when email exists")
+        @DisplayName("Debería cargar usuario correctamente cuando el email existe")
         void shouldLoadUserSuccessfullyWhenEmailExists() {
             // Given
             UserEntity userEntity = createUserEntity(Role.ADMIN);
@@ -94,7 +94,7 @@ class CustomUserDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should load user with CONSUMER role successfully")
+        @DisplayName("Debería cargar usuario con rol CONSUMER correctamente")
         void shouldLoadUserWithConsumerRole() {
             // Given
             UserEntity userEntity = createUserEntity(Role.CONSUMER);
@@ -113,7 +113,7 @@ class CustomUserDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should load user with INVITADO role successfully")
+        @DisplayName("Debería cargar usuario con rol INVITADO correctamente")
         void shouldLoadUserWithInvitadoRole() {
             // Given
             UserEntity userEntity = createUserEntity(Role.INVITADO);
@@ -132,7 +132,7 @@ class CustomUserDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw UsernameNotFoundException when email does not exist")
+        @DisplayName("Debería lanzar UsernameNotFoundException cuando el email no existe")
         void shouldThrowExceptionWhenEmailNotFound() {
             // Given
             String nonExistentEmail = "nonexistent@example.com";
@@ -148,7 +148,7 @@ class CustomUserDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should call repository with correct email")
+        @DisplayName("Debería llamar al repositorio con el email correcto")
         void shouldCallRepositoryWithCorrectEmail() {
             // Given
             UserEntity userEntity = createUserEntity(Role.ADMIN);

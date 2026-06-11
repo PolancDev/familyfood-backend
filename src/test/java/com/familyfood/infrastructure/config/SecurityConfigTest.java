@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * - La estructura de la clase (anotaciones, constructor)
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("SecurityConfig Tests")
+@DisplayName("Tests de SecurityConfig")
 class SecurityConfigTest {
 
     @Mock
@@ -40,7 +40,7 @@ class SecurityConfigTest {
     private UserDetailsService userDetailsService;
 
     @Test
-    @DisplayName("Should have @EnableWebSecurity annotation")
+    @DisplayName("Debería tener la anotación @EnableWebSecurity")
     void shouldHaveEnableWebSecurityAnnotation() {
         // Given
         EnableWebSecurity annotation = SecurityConfig.class.getAnnotation(EnableWebSecurity.class);
@@ -50,7 +50,7 @@ class SecurityConfigTest {
     }
 
     @Test
-    @DisplayName("Should have @Configuration annotation")
+    @DisplayName("Debería tener la anotación @Configuration")
     void shouldHaveConfigurationAnnotation() {
         // Given
         org.springframework.context.annotation.Configuration annotation =
@@ -61,7 +61,7 @@ class SecurityConfigTest {
     }
 
     @Test
-    @DisplayName("Should create BCryptPasswordEncoder")
+    @DisplayName("Debería crear BCryptPasswordEncoder")
     void shouldCreateBCryptPasswordEncoder() {
         // Given
         SecurityConfig securityConfig = new SecurityConfig(jwtAuthenticationFilter, userDetailsService);
@@ -75,7 +75,7 @@ class SecurityConfigTest {
     }
 
     @Test
-    @DisplayName("Should encode and match passwords correctly")
+    @DisplayName("Debería codificar y verificar contraseñas correctamente")
     void shouldEncodeAndMatchPasswords() {
         // Given
         SecurityConfig securityConfig = new SecurityConfig(jwtAuthenticationFilter, userDetailsService);
@@ -93,7 +93,7 @@ class SecurityConfigTest {
     }
 
     @Test
-    @DisplayName("Should create CORS configuration source")
+    @DisplayName("Debería crear la fuente de configuración CORS")
     void shouldCreateCorsConfigurationSource() {
         // Given
         SecurityConfig securityConfig = new SecurityConfig(jwtAuthenticationFilter, userDetailsService);

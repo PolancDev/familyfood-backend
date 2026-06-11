@@ -6,11 +6,16 @@ import com.familyfood.application.dto.recipe.RecipeListResponse;
 import com.familyfood.application.dto.recipe.RecipeResponse;
 import com.familyfood.application.dto.recipe.UpdateRecipeRequest;
 import com.familyfood.application.mapper.RecipeMapper;
+import com.familyfood.application.port.repository.FamilyMemberRepository;
 import com.familyfood.application.port.repository.RecipeRepository;
+import com.familyfood.application.port.repository.UserRepository;
 import com.familyfood.domain.enums.EtiquetaReceta;
 import com.familyfood.domain.exception.RecipeNotFoundException;
+import com.familyfood.domain.exception.UnauthorizedException;
+import com.familyfood.domain.model.FamilyMember;
 import com.familyfood.domain.model.Recipe;
 import com.familyfood.domain.model.RecipeIngredient;
+import com.familyfood.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,21 +42,30 @@ class RecipeServiceTest {
     @Mock
     private RecipeMapper recipeMapper;
 
+    @Mock
+    private FamilyMemberRepository familyMemberRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
     private RecipeService recipeService;
 
     private UUID userId;
     private UUID recipeId;
+    private UUID familyGroupId;
     private Recipe testRecipe;
     private RecipeResponse testRecipeResponse;
     private CreateRecipeRequest createRequest;
     private UpdateRecipeRequest updateRequest;
+    private User testUser;
 
     @BeforeEach
     void setUp() {
-        recipeService = new RecipeService(recipeRepository, recipeMapper);
+        recipeService = new RecipeService(recipeRepository, recipeMapper, familyMemberRepository, userRepository);
 
         userId = UUID.randomUUID();
         recipeId = UUID.randomUUID();
+        familyGroupId = UUID.randomUUID();
 
         List<RecipeIngredient> ingredients = List.of(
                 RecipeIngredient.builder().nombre("Tomate").cantidad(2.0).unidad("unidades").build()
@@ -68,6 +82,7 @@ class RecipeServiceTest {
                 .etiquetas(List.of(EtiquetaReceta.RAPIDA))
                 .favorita(false)
                 .userId(userId)
+                .familyGroupId(null)
                 .version(0L)
                 .build();
 
@@ -78,7 +93,7 @@ class RecipeServiceTest {
         testRecipeResponse = new RecipeResponse(
                 recipeId, "Ensalada", "Ensalada fresca", 15, 2,
                 ingredientDTOs, List.of("Cortar", "Mezclar"),
-                List.of(EtiquetaReceta.RAPIDA), null, false
+                List.of(EtiquetaReceta.RAPIDA), null, false, "Usuario Test"
         );
 
         createRequest = new CreateRecipeRequest(
@@ -92,6 +107,17 @@ class RecipeServiceTest {
                 ingredientDTOs, List.of("Cortar", "Mezclar", "Servir"),
                 List.of(EtiquetaReceta.RAPIDA, EtiquetaReceta.ECONOMICA)
         );
+
+        testUser = User.builder().id(userId).nombre("Usuario Test").email("test@test.com").build();
+    }
+
+    /**
+     * Helper: configura los mocks comunes para toResponseWithCreator.
+     * RecipeService.toResponseWithCreator() llama a recipeMapper.toResponse() y userRepository.findById().
+     */
+    private void setupCreatorMocks() {
+        when(recipeMapper.toResponse(any(Recipe.class))).thenReturn(testRecipeResponse);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
     }
 
     @Nested
@@ -99,10 +125,11 @@ class RecipeServiceTest {
     class ListarRecetasTests {
 
         @Test
-        @DisplayName("Should list all recipes for user")
-        void shouldListAllRecipes() {
+        @DisplayName("Should list all recipes for user without family")
+        void shouldListAllRecipesForUserWithoutFamily() {
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of());
             when(recipeRepository.findByUserId(userId)).thenReturn(List.of(testRecipe));
-            when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
+            setupCreatorMocks();
 
             RecipeListResponse response = recipeService.listarRecetas(userId, null, null, null);
 
@@ -113,10 +140,28 @@ class RecipeServiceTest {
         }
 
         @Test
-        @DisplayName("Should list favorite recipes when favoritas=true")
-        void shouldListFavoriteRecipes() {
+        @DisplayName("Should list all recipes for user with family")
+        void shouldListAllRecipesForUserWithFamily() {
+            FamilyMember membership = FamilyMember.builder()
+                    .id(UUID.randomUUID()).userId(userId).familyGroupId(familyGroupId)
+                    .role(com.familyfood.domain.enums.FamilyRole.ADMIN).build();
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of(membership));
+            when(recipeRepository.findByFamilyGroupId(familyGroupId)).thenReturn(List.of(testRecipe));
+            setupCreatorMocks();
+
+            RecipeListResponse response = recipeService.listarRecetas(userId, null, null, null);
+
+            assertThat(response).isNotNull();
+            assertThat(response.recetas()).hasSize(1);
+            verify(recipeRepository).findByFamilyGroupId(familyGroupId);
+        }
+
+        @Test
+        @DisplayName("Should list favorite recipes when favoritas=true and no family")
+        void shouldListFavoriteRecipesNoFamily() {
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of());
             when(recipeRepository.findByFavoritaTrueAndUserId(userId)).thenReturn(List.of(testRecipe));
-            when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
+            setupCreatorMocks();
 
             RecipeListResponse response = recipeService.listarRecetas(userId, true, null, null);
 
@@ -126,11 +171,29 @@ class RecipeServiceTest {
         }
 
         @Test
-        @DisplayName("Should search recipes by name")
-        void shouldSearchRecipesByName() {
+        @DisplayName("Should list favorite recipes when favoritas=true with family")
+        void shouldListFavoriteRecipesWithFamily() {
+            FamilyMember membership = FamilyMember.builder()
+                    .id(UUID.randomUUID()).userId(userId).familyGroupId(familyGroupId)
+                    .role(com.familyfood.domain.enums.FamilyRole.ADMIN).build();
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of(membership));
+            when(recipeRepository.findByFavoritaTrueAndFamilyGroupId(familyGroupId)).thenReturn(List.of(testRecipe));
+            setupCreatorMocks();
+
+            RecipeListResponse response = recipeService.listarRecetas(userId, true, null, null);
+
+            assertThat(response).isNotNull();
+            assertThat(response.recetas()).hasSize(1);
+            verify(recipeRepository).findByFavoritaTrueAndFamilyGroupId(familyGroupId);
+        }
+
+        @Test
+        @DisplayName("Should search recipes by name for user without family")
+        void shouldSearchRecipesByNameNoFamily() {
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of());
             when(recipeRepository.findByNombreContainingIgnoreCaseAndUserId("ensalada", userId))
                     .thenReturn(List.of(testRecipe));
-            when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
+            setupCreatorMocks();
 
             RecipeListResponse response = recipeService.listarRecetas(userId, null, "ensalada", null);
 
@@ -140,11 +203,30 @@ class RecipeServiceTest {
         }
 
         @Test
-        @DisplayName("Should filter recipes by etiqueta")
-        void shouldFilterByEtiqueta() {
+        @DisplayName("Should search recipes by name for user with family")
+        void shouldSearchRecipesByNameWithFamily() {
+            FamilyMember membership = FamilyMember.builder()
+                    .id(UUID.randomUUID()).userId(userId).familyGroupId(familyGroupId)
+                    .role(com.familyfood.domain.enums.FamilyRole.ADMIN).build();
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of(membership));
+            when(recipeRepository.findByNombreContainingIgnoreCaseAndFamilyGroupId("ensalada", familyGroupId))
+                    .thenReturn(List.of(testRecipe));
+            setupCreatorMocks();
+
+            RecipeListResponse response = recipeService.listarRecetas(userId, null, "ensalada", null);
+
+            assertThat(response).isNotNull();
+            assertThat(response.recetas()).hasSize(1);
+            verify(recipeRepository).findByNombreContainingIgnoreCaseAndFamilyGroupId("ensalada", familyGroupId);
+        }
+
+        @Test
+        @DisplayName("Should filter recipes by etiqueta for user without family")
+        void shouldFilterByEtiquetaNoFamily() {
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of());
             when(recipeRepository.findByEtiquetasContainsAndUserId("RAPIDA", userId))
                     .thenReturn(List.of(testRecipe));
-            when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
+            setupCreatorMocks();
 
             RecipeListResponse response = recipeService.listarRecetas(userId, null, null, "RAPIDA");
 
@@ -154,17 +236,21 @@ class RecipeServiceTest {
         }
 
         @Test
-        @DisplayName("Should filter recipes by custom etiqueta")
-        void shouldFilterByCustomEtiqueta() {
-            when(recipeRepository.findByEtiquetasContainsAndUserId("ETIQUETA1", userId))
+        @DisplayName("Should filter recipes by etiqueta for user with family")
+        void shouldFilterByEtiquetaWithFamily() {
+            FamilyMember membership = FamilyMember.builder()
+                    .id(UUID.randomUUID()).userId(userId).familyGroupId(familyGroupId)
+                    .role(com.familyfood.domain.enums.FamilyRole.ADMIN).build();
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of(membership));
+            when(recipeRepository.findByEtiquetasContainsAndFamilyGroupId("RAPIDA", familyGroupId))
                     .thenReturn(List.of(testRecipe));
-            when(recipeMapper.toResponseList(anyList())).thenReturn(List.of(testRecipeResponse));
+            setupCreatorMocks();
 
-            RecipeListResponse response = recipeService.listarRecetas(userId, null, null, "etiqueta1");
+            RecipeListResponse response = recipeService.listarRecetas(userId, null, null, "RAPIDA");
 
             assertThat(response).isNotNull();
             assertThat(response.recetas()).hasSize(1);
-            verify(recipeRepository).findByEtiquetasContainsAndUserId("ETIQUETA1", userId);
+            verify(recipeRepository).findByEtiquetasContainsAndFamilyGroupId("RAPIDA", familyGroupId);
         }
     }
 
@@ -173,16 +259,30 @@ class RecipeServiceTest {
     class ObtenerRecetaTests {
 
         @Test
-        @DisplayName("Should return recipe when found")
+        @DisplayName("Should return recipe when found with creator name")
         void shouldReturnRecipeWhenFound() {
             when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
-            when(recipeMapper.toResponse(testRecipe)).thenReturn(testRecipeResponse);
+            setupCreatorMocks();
 
             RecipeResponse response = recipeService.obtenerReceta(recipeId);
 
             assertThat(response).isNotNull();
             assertThat(response.id()).isEqualTo(recipeId);
             assertThat(response.nombre()).isEqualTo("Ensalada");
+            assertThat(response.nombreCreador()).isEqualTo("Usuario Test");
+        }
+
+        @Test
+        @DisplayName("Should return recipe with 'Desconocido' when creator not found")
+        void shouldReturnDesconocidoWhenCreatorNotFound() {
+            when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
+            when(recipeMapper.toResponse(testRecipe)).thenReturn(testRecipeResponse);
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            RecipeResponse response = recipeService.obtenerReceta(recipeId);
+
+            assertThat(response).isNotNull();
+            assertThat(response.nombreCreador()).isEqualTo("Desconocido");
         }
 
         @Test
@@ -201,16 +301,34 @@ class RecipeServiceTest {
     class CrearRecetaTests {
 
         @Test
-        @DisplayName("Should create recipe successfully")
-        void shouldCreateRecipeSuccessfully() {
+        @DisplayName("Should create recipe without family")
+        void shouldCreateRecipeWithoutFamily() {
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of());
             when(recipeMapper.toDomainFromCreate(createRequest)).thenReturn(testRecipe);
             when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-            when(recipeMapper.toResponse(testRecipe)).thenReturn(testRecipeResponse);
+            setupCreatorMocks();
 
             RecipeResponse response = recipeService.crearReceta(createRequest, userId);
 
             assertThat(response).isNotNull();
             assertThat(response.nombre()).isEqualTo("Ensalada");
+            verify(recipeRepository).save(any(Recipe.class));
+        }
+
+        @Test
+        @DisplayName("Should create recipe with family")
+        void shouldCreateRecipeWithFamily() {
+            FamilyMember membership = FamilyMember.builder()
+                    .id(UUID.randomUUID()).userId(userId).familyGroupId(familyGroupId)
+                    .role(com.familyfood.domain.enums.FamilyRole.ADMIN).build();
+            when(familyMemberRepository.findByUserId(userId)).thenReturn(List.of(membership));
+            when(recipeMapper.toDomainFromCreate(createRequest)).thenReturn(testRecipe);
+            when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+            setupCreatorMocks();
+
+            RecipeResponse response = recipeService.crearReceta(createRequest, userId);
+
+            assertThat(response).isNotNull();
             verify(recipeRepository).save(any(Recipe.class));
         }
     }
@@ -220,12 +338,12 @@ class RecipeServiceTest {
     class ActualizarRecetaTests {
 
         @Test
-        @DisplayName("Should update recipe successfully")
+        @DisplayName("Should update recipe successfully when user is author")
         void shouldUpdateRecipeSuccessfully() {
             when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
             when(recipeMapper.toDomainFromUpdate(updateRequest)).thenReturn(testRecipe);
             when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-            when(recipeMapper.toResponse(testRecipe)).thenReturn(testRecipeResponse);
+            setupCreatorMocks();
 
             RecipeResponse response = recipeService.actualizarReceta(recipeId, updateRequest, userId);
 
@@ -243,6 +361,16 @@ class RecipeServiceTest {
                     .isInstanceOf(RecipeNotFoundException.class)
                     .hasMessageContaining("No se ha encontrado la receta solicitada");
         }
+
+        @Test
+        @DisplayName("Should throw UnauthorizedException when user is not author or admin")
+        void shouldThrowUnauthorizedWhenNotOwner() {
+            UUID otherUserId = UUID.randomUUID();
+            when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
+
+            assertThatThrownBy(() -> recipeService.actualizarReceta(recipeId, updateRequest, otherUserId))
+                    .isInstanceOf(UnauthorizedException.class);
+        }
     }
 
     @Nested
@@ -250,11 +378,11 @@ class RecipeServiceTest {
     class EliminarRecetaTests {
 
         @Test
-        @DisplayName("Should delete recipe successfully")
+        @DisplayName("Should delete recipe successfully when user is author")
         void shouldDeleteRecipeSuccessfully() {
-            when(recipeRepository.existsById(recipeId)).thenReturn(true);
+            when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
 
-            recipeService.eliminarReceta(recipeId);
+            recipeService.eliminarReceta(recipeId, userId);
 
             verify(recipeRepository).deleteById(recipeId);
         }
@@ -262,11 +390,21 @@ class RecipeServiceTest {
         @Test
         @DisplayName("Should throw exception when deleting non-existent recipe")
         void shouldThrowExceptionWhenNotFound() {
-            when(recipeRepository.existsById(recipeId)).thenReturn(false);
+            when(recipeRepository.findById(recipeId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> recipeService.eliminarReceta(recipeId))
+            assertThatThrownBy(() -> recipeService.eliminarReceta(recipeId, userId))
                     .isInstanceOf(RecipeNotFoundException.class)
                     .hasMessageContaining("No se ha encontrado la receta solicitada");
+        }
+
+        @Test
+        @DisplayName("Should throw UnauthorizedException when user is not author or admin")
+        void shouldThrowUnauthorizedWhenNotOwner() {
+            UUID otherUserId = UUID.randomUUID();
+            when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
+
+            assertThatThrownBy(() -> recipeService.eliminarReceta(recipeId, otherUserId))
+                    .isInstanceOf(UnauthorizedException.class);
         }
     }
 
@@ -279,9 +417,9 @@ class RecipeServiceTest {
         void shouldToggleFavoriteStatus() {
             when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(testRecipe));
             when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-            when(recipeMapper.toResponse(testRecipe)).thenReturn(testRecipeResponse);
+            setupCreatorMocks();
 
-            RecipeResponse response = recipeService.toggleFavorita(recipeId);
+            RecipeResponse response = recipeService.toggleFavorita(recipeId, userId);
 
             assertThat(response).isNotNull();
             verify(recipeRepository).findById(recipeId);
@@ -293,7 +431,7 @@ class RecipeServiceTest {
         void shouldThrowExceptionWhenNotFound() {
             when(recipeRepository.findById(recipeId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> recipeService.toggleFavorita(recipeId))
+            assertThatThrownBy(() -> recipeService.toggleFavorita(recipeId, userId))
                     .isInstanceOf(RecipeNotFoundException.class)
                     .hasMessageContaining("No se ha encontrado la receta solicitada");
         }

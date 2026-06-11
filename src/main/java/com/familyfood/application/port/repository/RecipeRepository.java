@@ -14,6 +14,16 @@ public interface RecipeRepository {
     List<Recipe> findByFavoritaTrueAndUserId(UUID userId);
     List<Recipe> findByEtiquetasContainsAndUserId(String etiqueta, UUID userId);
     List<Recipe> findByNombreContainingIgnoreCaseAndUserId(String busqueda, UUID userId);
+
+    // Queries por grupo familiar (recetas compartidas)
+    List<Recipe> findByFamilyGroupId(UUID familyGroupId);
+    List<Recipe> findByFavoritaTrueAndFamilyGroupId(UUID familyGroupId);
+    List<Recipe> findByEtiquetasContainsAndFamilyGroupId(String etiqueta, UUID familyGroupId);
+    List<Recipe> findByNombreContainingIgnoreCaseAndFamilyGroupId(String busqueda, UUID familyGroupId);
+
+    // Fallback: usuario sin familia
+    List<Recipe> findByUserIdAndFamilyGroupIdIsNull(UUID userId);
+
     void deleteById(UUID id);
     boolean existsById(UUID id);
 }

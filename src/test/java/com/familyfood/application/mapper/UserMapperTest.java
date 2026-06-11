@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("UserMapper Tests")
+@DisplayName("Tests de UserMapper")
 class UserMapperTest {
 
     private UserMapper userMapper;
@@ -35,7 +35,7 @@ class UserMapperTest {
     class ToEntityForCreate {
 
         @Test
-        @DisplayName("should map User to UserEntity ignoring id, dates and preferences fields")
+        @DisplayName("debería mapear User a UserEntity ignorando id, fechas y campos de preferencias")
         void shouldMapToEntityForCreate() {
             // Given
             User user = User.builder()
@@ -76,7 +76,7 @@ class UserMapperTest {
     class ToEntityForUpdate {
 
         @Test
-        @DisplayName("should map User to UserEntity for update preserving role")
+        @DisplayName("debería mapear User a UserEntity para actualización preservando el rol")
         void shouldMapToEntityForUpdate() {
             // Given
             User user = User.builder()
@@ -115,7 +115,7 @@ class UserMapperTest {
     class ToDomain {
 
         @Test
-        @DisplayName("should map UserEntity to User with preferences when preference fields exist")
+        @DisplayName("debería mapear UserEntity a User con preferencias cuando los campos de preferencias existen")
         void shouldMapToDomainWithPreferences() {
             // Given
             UserEntity entity = UserEntity.builder()
@@ -151,7 +151,7 @@ class UserMapperTest {
         }
 
         @Test
-        @DisplayName("should map UserEntity to User with null preferences when no preference fields")
+        @DisplayName("debería mapear UserEntity a User con preferencias nulas cuando no hay campos de preferencias")
         void shouldMapToDomainWithoutPreferences() {
             // Given
             UserEntity entity = UserEntity.builder()
@@ -181,7 +181,7 @@ class UserMapperTest {
         }
 
         @Test
-        @DisplayName("should return null when UserEntity is null")
+        @DisplayName("debería devolver null cuando UserEntity es null")
         void shouldReturnNullWhenEntityIsNull() {
             // Given
             UserEntity entity = null;
@@ -199,7 +199,7 @@ class UserMapperTest {
     class ToDomainBasic {
 
         @Test
-        @DisplayName("should map UserEntity to User without preferences and password")
+        @DisplayName("debería mapear UserEntity a User sin preferencias ni contraseña")
         void shouldMapToDomainBasic() {
             // Given
             UserEntity entity = UserEntity.builder()

@@ -70,16 +70,18 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarReceta(@PathVariable UUID id) {
-        log.info("Eliminando receta con id: {}", id);
-        recipeService.eliminarReceta(id);
+    public ResponseEntity<Void> eliminarReceta(@PathVariable UUID id, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        log.info("Eliminando receta con id: {} por usuario: {}", id, userId);
+        recipeService.eliminarReceta(id, userId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/favorita")
-    public ResponseEntity<RecipeResponse> toggleFavorita(@PathVariable UUID id) {
-        log.info("Toggle favorita para receta con id: {}", id);
-        return ResponseEntity.ok(recipeService.toggleFavorita(id));
+    public ResponseEntity<RecipeResponse> toggleFavorita(@PathVariable UUID id, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        log.info("Toggle favorita para receta con id: {} por usuario: {}", id, userId);
+        return ResponseEntity.ok(recipeService.toggleFavorita(id, userId));
     }
 
     private UUID getUserIdFromAuthentication(Authentication authentication) {

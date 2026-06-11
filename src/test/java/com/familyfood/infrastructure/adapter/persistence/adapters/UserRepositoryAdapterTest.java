@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserRepositoryAdapter Tests")
+@DisplayName("Tests de UserRepositoryAdapter")
 class UserRepositoryAdapterTest {
 
     @Mock
@@ -60,11 +60,11 @@ class UserRepositoryAdapterTest {
     }
 
     @Nested
-    @DisplayName("Save Tests")
+    @DisplayName("Tests de guardado")
     class SaveTests {
 
         @Test
-        @DisplayName("Should save user successfully")
+        @DisplayName("Debería guardar usuario correctamente")
         void shouldSaveUserSuccessfully() {
             // Given
             when(userMapper.toEntityForUpdate(any(User.class))).thenReturn(testUserEntity);
@@ -84,7 +84,7 @@ class UserRepositoryAdapterTest {
         }
 
         @Test
-        @DisplayName("Should save user with preferences")
+        @DisplayName("Debería guardar usuario con preferencias")
         void shouldSaveUserWithPreferences() {
             // Given
             Preferences prefs = Preferences.builder()
@@ -109,11 +109,11 @@ class UserRepositoryAdapterTest {
     }
 
     @Nested
-    @DisplayName("Find By ID Tests")
+    @DisplayName("Tests de búsqueda por ID")
     class FindByIdTests {
 
         @Test
-        @DisplayName("Should find user by ID")
+        @DisplayName("Debería encontrar usuario por ID")
         void shouldFindUserById() {
             // Given
             when(springDataUserRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
@@ -129,7 +129,7 @@ class UserRepositoryAdapterTest {
         }
 
         @Test
-        @DisplayName("Should return empty when user not found")
+        @DisplayName("Debería devolver vacío cuando el usuario no se encuentra")
         void shouldReturnEmptyWhenUserNotFound() {
             // Given
             UUID unknownId = UUID.randomUUID();
@@ -144,11 +144,11 @@ class UserRepositoryAdapterTest {
     }
 
     @Nested
-    @DisplayName("Find By Email Tests")
+    @DisplayName("Tests de búsqueda por email")
     class FindByEmailTests {
 
         @Test
-        @DisplayName("Should find user by email")
+        @DisplayName("Debería encontrar usuario por email")
         void shouldFindUserByEmail() {
             // Given
             when(springDataUserRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUserEntity));
@@ -163,7 +163,7 @@ class UserRepositoryAdapterTest {
         }
 
         @Test
-        @DisplayName("Should return empty for non-existent email")
+        @DisplayName("Debería devolver vacío para email inexistente")
         void shouldReturnEmptyForNonExistentEmail() {
             // Given
             String unknownEmail = "unknown@example.com";
@@ -178,11 +178,11 @@ class UserRepositoryAdapterTest {
     }
 
     @Nested
-    @DisplayName("Exists By Email Tests")
+    @DisplayName("Tests de existencia por email")
     class ExistsByEmailTests {
 
         @Test
-        @DisplayName("Should return true when email exists")
+        @DisplayName("Debería devolver true cuando el email existe")
         void shouldReturnTrueWhenEmailExists() {
             // Given
             when(springDataUserRepository.existsByEmail(testUser.getEmail())).thenReturn(true);
@@ -195,7 +195,7 @@ class UserRepositoryAdapterTest {
         }
 
         @Test
-        @DisplayName("Should return false when email does not exist")
+        @DisplayName("Debería devolver false cuando el email no existe")
         void shouldReturnFalseWhenEmailDoesNotExist() {
             // Given
             String unknownEmail = "unknown@example.com";

@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("JwtAuthenticationFilter Tests")
+@DisplayName("Tests de JwtAuthenticationFilter")
 class JwtAuthenticationFilterTest {
 
     @Mock
@@ -51,11 +51,11 @@ class JwtAuthenticationFilterTest {
     }
 
     @Nested
-    @DisplayName("Authorization Header Tests")
+    @DisplayName("Tests de cabecera Authorization")
     class AuthorizationHeaderTests {
 
         @Test
-        @DisplayName("Should continue filter chain when Authorization header is absent")
+        @DisplayName("Debería continuar la cadena de filtros cuando la cabecera Authorization está ausente")
         void shouldContinueChainWhenAuthHeaderAbsent() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn(null);
@@ -69,7 +69,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        @DisplayName("Should continue filter chain when Authorization header does not start with Bearer")
+        @DisplayName("Debería continuar la cadena de filtros cuando la cabecera Authorization no empieza con Bearer")
         void shouldContinueChainWhenAuthHeaderNotBearer() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("Basic some-token");
@@ -83,7 +83,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        @DisplayName("Should continue filter chain when Authorization header is empty")
+        @DisplayName("Debería continuar la cadena de filtros cuando la cabecera Authorization está vacía")
         void shouldContinueChainWhenAuthHeaderIsEmpty() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("");
@@ -98,11 +98,11 @@ class JwtAuthenticationFilterTest {
     }
 
     @Nested
-    @DisplayName("Token Validation Tests")
+    @DisplayName("Tests de validación de token")
     class TokenValidationTests {
 
         @Test
-        @DisplayName("Should authenticate user when token is valid")
+        @DisplayName("Debería autenticar al usuario cuando el token es válido")
         void shouldAuthenticateUserWhenTokenIsValid() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("Bearer " + VALID_TOKEN);
@@ -135,7 +135,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        @DisplayName("Should not authenticate user when token is invalid")
+        @DisplayName("No debería autenticar al usuario cuando el token es inválido")
         void shouldNotAuthenticateUserWhenTokenIsInvalid() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("Bearer " + VALID_TOKEN);
@@ -162,7 +162,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        @DisplayName("Should not authenticate user when email extracted is null")
+        @DisplayName("No debería autenticar al usuario cuando el email extraído es null")
         void shouldNotAuthenticateUserWhenEmailIsNull() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("Bearer " + VALID_TOKEN);
@@ -178,7 +178,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        @DisplayName("Should not authenticate user when email does not exist in database")
+        @DisplayName("No debería autenticar al usuario cuando el email no existe en la base de datos")
         void shouldNotAuthenticateUserWhenEmailNotFound() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("Bearer " + VALID_TOKEN);
@@ -195,7 +195,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        @DisplayName("Should handle JwtService exception gracefully")
+        @DisplayName("Debería manejar excepción de JwtService correctamente")
         void shouldHandleJwtServiceExceptionGracefully() throws Exception {
             // Given
             when(request.getHeader("Authorization")).thenReturn("Bearer " + VALID_TOKEN);

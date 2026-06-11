@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("PasswordEncoderAdapter Tests")
+@DisplayName("Tests de PasswordEncoderAdapter")
 class PasswordEncoderAdapterTest {
 
     private PasswordEncoderAdapter passwordEncoderAdapter;
@@ -18,11 +18,11 @@ class PasswordEncoderAdapterTest {
     }
 
     @Nested
-    @DisplayName("Encode Tests")
+    @DisplayName("Tests de codificación")
     class EncodeTests {
 
         @Test
-        @DisplayName("Should encode password successfully")
+        @DisplayName("Debería codificar contraseña correctamente")
         void shouldEncodePasswordSuccessfully() {
             // Given
             String rawPassword = "mySecurePassword";
@@ -37,7 +37,7 @@ class PasswordEncoderAdapterTest {
         }
 
         @Test
-        @DisplayName("Should generate different hashes for same password")
+        @DisplayName("Debería generar hashes diferentes para la misma contraseña")
         void shouldGenerateDifferentHashesForSamePassword() {
             // Given
             String rawPassword = "mySecurePassword";
@@ -52,11 +52,11 @@ class PasswordEncoderAdapterTest {
     }
 
     @Nested
-    @DisplayName("Matches Tests")
+    @DisplayName("Tests de verificación")
     class MatchesTests {
 
         @Test
-        @DisplayName("Should match correct password")
+        @DisplayName("Debería verificar contraseña correcta")
         void shouldMatchCorrectPassword() {
             // Given
             String rawPassword = "mySecurePassword";
@@ -70,7 +70,7 @@ class PasswordEncoderAdapterTest {
         }
 
         @Test
-        @DisplayName("Should not match incorrect password")
+        @DisplayName("No debería verificar contraseña incorrecta")
         void shouldNotMatchIncorrectPassword() {
             // Given
             String correctPassword = "mySecurePassword";

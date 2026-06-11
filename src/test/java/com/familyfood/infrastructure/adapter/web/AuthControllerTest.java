@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("AuthController Tests")
+@DisplayName("Tests de AuthController")
 class AuthControllerTest {
 
     private MockMvc mockMvc;
@@ -49,11 +49,11 @@ class AuthControllerTest {
     }
 
     @Nested
-    @DisplayName("Register Endpoint Tests")
+    @DisplayName("Tests del endpoint de registro")
     class RegisterEndpointTests {
 
         @Test
-        @DisplayName("Should register user successfully")
+        @DisplayName("Debería registrar usuario correctamente")
         void shouldRegisterUserSuccessfully() throws Exception {
             // Given
             RegisterRequest request = new RegisterRequest(
@@ -83,7 +83,7 @@ class AuthControllerTest {
         }
 
         @Test
-        @DisplayName("Should return conflict when email already exists")
+        @DisplayName("Debería devolver conflict cuando el email ya existe")
         void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
             // Given
             RegisterRequest request = new RegisterRequest(
@@ -104,11 +104,11 @@ class AuthControllerTest {
     }
 
     @Nested
-    @DisplayName("Login Endpoint Tests")
+    @DisplayName("Tests del endpoint de login")
     class LoginEndpointTests {
 
         @Test
-        @DisplayName("Should login user successfully")
+        @DisplayName("Debería iniciar sesión correctamente")
         void shouldLoginUserSuccessfully() throws Exception {
             // Given
             LoginRequest request = new LoginRequest(
@@ -138,7 +138,7 @@ class AuthControllerTest {
         }
 
         @Test
-        @DisplayName("Should return unauthorized for invalid credentials")
+        @DisplayName("Debería devolver unauthorized cuando las credenciales son inválidas")
         void shouldReturnUnauthorizedForInvalidCredentials() throws Exception {
             // Given
             LoginRequest request = new LoginRequest(
