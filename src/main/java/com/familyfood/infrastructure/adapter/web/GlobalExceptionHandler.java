@@ -8,6 +8,7 @@ import com.familyfood.domain.exception.JoinRequestNotFoundException;
 import com.familyfood.domain.exception.RecipeNotFoundException;
 import com.familyfood.domain.exception.UnauthorizedException;
 import com.familyfood.domain.exception.UserNotFoundException;
+import com.familyfood.domain.exception.WeeklyPlanNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -181,6 +182,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RecipeNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleRecipeNotFound(
             final RecipeNotFoundException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Maneja excepción de plan semanal no encontrado.
+     *
+     * @param ex excepción de plan semanal no encontrado
+     * @return respuesta con estado NOT_FOUND
+     */
+    @ExceptionHandler(WeeklyPlanNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleWeeklyPlanNotFound(
+            final WeeklyPlanNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.NOT_FOUND.value());

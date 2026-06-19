@@ -4,6 +4,7 @@ package com.familyfood.infrastructure.config;
 import com.familyfood.application.mapper.AuthResponseMapper;
 import com.familyfood.application.mapper.FamilyMapper;
 import com.familyfood.application.mapper.RecipeMapper;
+import com.familyfood.application.mapper.WeeklyPlanMapper;
 import com.familyfood.application.port.repository.FamilyGroupRepository;
 import com.familyfood.application.port.repository.FamilyMemberRepository;
 import com.familyfood.application.port.repository.JoinRequestRepository;
@@ -11,9 +12,11 @@ import com.familyfood.application.port.repository.JwtService;
 import com.familyfood.application.port.repository.PasswordEncoder;
 import com.familyfood.application.port.repository.RecipeRepository;
 import com.familyfood.application.port.repository.UserRepository;
+import com.familyfood.application.port.repository.WeeklyPlanRepository;
 import com.familyfood.application.service.AuthService;
 import com.familyfood.application.service.FamilyService;
 import com.familyfood.application.service.RecipeService;
+import com.familyfood.application.service.WeeklyPlanService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,5 +50,15 @@ public class ApplicationServiceConfig {
                                        FamilyMemberRepository familyMemberRepository,
                                        UserRepository userRepository) {
         return new RecipeService(recipeRepository, recipeMapper, familyMemberRepository, userRepository);
+    }
+
+    @Bean
+    public WeeklyPlanService weeklyPlanService(WeeklyPlanRepository weeklyPlanRepository,
+                                                RecipeRepository recipeRepository,
+                                                FamilyMemberRepository familyMemberRepository,
+                                                UserRepository userRepository,
+                                                WeeklyPlanMapper weeklyPlanMapper) {
+        return new WeeklyPlanService(weeklyPlanRepository, recipeRepository,
+                familyMemberRepository, userRepository, weeklyPlanMapper);
     }
 }

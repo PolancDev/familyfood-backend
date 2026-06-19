@@ -35,3 +35,7 @@ logging:
     org.springframework.security: DEBUG
     org.flywaydb: DEBUG
     org.hibernate.tool.hbm2ddl: DEBUG
+    
+application:
+    title: FamilyFood
+    version: 0.0.2-SNAPSHOT
