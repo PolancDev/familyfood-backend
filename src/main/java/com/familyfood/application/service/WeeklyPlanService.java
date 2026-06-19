@@ -273,6 +273,13 @@ public class WeeklyPlanService {
                     }
                 }
 
+                // ¿Hay sugerencia de sobras pendiente para este slot?
+                if (sobrasSuggestions.containsKey(slotKey)) {
+                    PlanDay sobrasDay = sobrasSuggestions.get(slotKey);
+                    newDays.add(sobrasDay);
+                    continue; // NO consumir receta del pool para este slot
+                }
+
                 if (recipeIndex >= pool.size()) {
                     recipeIndex = 0;
                 }
@@ -323,15 +330,6 @@ public class WeeklyPlanService {
 
                 newDays.add(day);
                 recipeIndex++;
-            }
-        }
-
-        // Reemplazar slots del día siguiente con SOBRAS
-        for (int i = 0; i < newDays.size(); i++) {
-            PlanDay day = newDays.get(i);
-            String key = day.getDia().name() + "_" + day.getTipo().name();
-            if (sobrasSuggestions.containsKey(key) && day.getEstado() == EstadoDia.IMPROVISADO) {
-                newDays.set(i, sobrasSuggestions.get(key));
             }
         }
 
