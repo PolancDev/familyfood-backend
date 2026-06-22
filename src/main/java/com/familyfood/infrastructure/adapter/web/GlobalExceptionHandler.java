@@ -6,6 +6,7 @@ import com.familyfood.domain.exception.InvalidCredentialsException;
 import com.familyfood.domain.exception.InvalidRoleException;
 import com.familyfood.domain.exception.JoinRequestNotFoundException;
 import com.familyfood.domain.exception.RecipeNotFoundException;
+import com.familyfood.domain.exception.ShoppingListNotFoundException;
 import com.familyfood.domain.exception.UnauthorizedException;
 import com.familyfood.domain.exception.UserNotFoundException;
 import com.familyfood.domain.exception.WeeklyPlanNotFoundException;
@@ -199,6 +200,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WeeklyPlanNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleWeeklyPlanNotFound(
             final WeeklyPlanNotFoundException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Maneja excepción de lista de compra no encontrada.
+     *
+     * @param ex excepción de lista de compra no encontrada
+     * @return respuesta con estado NOT_FOUND
+     */
+    @ExceptionHandler(ShoppingListNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleShoppingListNotFound(
+            final ShoppingListNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.NOT_FOUND.value());
